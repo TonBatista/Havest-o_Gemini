@@ -1,0 +1,272 @@
+# Harvestão — a vida no campo
+
+Versão 0.52.0. Fazenda em miniatura para navegador, com regiões conectadas.
+
+[Jogar no navegador](https://tonbatista.github.io/harvestao-diorama/)
+
+## Atualização 0.52
+
+Colisões de veículos refinadas, ré do trator, engate assistido da carroça, escova equipável, máquinas separadas com uso direto, galinheiro com silo e calçadas portuguesas sem ciclovias.
+
+## Ferramentas e coleta no celeiro — 0.51
+
+Compre a ordenhadeira manual e a tesoura de tosquia na Agro Santa Cruz. Na casinha de ferramentas, escolha o que levar ou guardar. A seleção vale para a mochila e a barra inferior. Use X junto da vaca com a ordenhadeira ou junto da ovelha com a tesoura. Use X com as mãos livres para recolher ovos nos ninhos ou fazer carinho nos animais. O produto vai para as mãos e pode ser guardado na mochila ou entregue na caixa de vendas.
+
+## Ruas da Vila Santa Cruz e carroça — 0.50
+
+A Praça São Benedito tem o triplo da área, com via de paralelepípedos ao redor, calçadas de mosaico, sarjetas e ciclovias. A passagem inclinada ao lado da escada leva os veículos à ponte e ao bairro de serviços. As placas de madeira da fachada identificam os seis comércios por seus ícones em relevo.
+
+Use X junto do cavalo ou montado para abrir o menu e acoplar ou estacionar a carroça. Para acoplar, leve o cavalo até a frente dela com a traseira voltada para o engate. Y desmonta. A carroça estacionada fica no mesmo cenário até você voltar para buscá-la.
+
+## Cerca de tocos alinhada — 0.49
+
+Na primeira abertura desta versão, os 41 tocos da cerca voltam às posições originais. O reset usa uma marca persistente e não se repete ao dormir, viajar ou recarregar; as novas mudanças continuam salvas. Plantações, construções e demais itens são preservados.
+
+A recolocação encaixa nas fileiras próximas, mantendo a mesma linha horizontal/vertical e os passos originais (1 m na vertical, 1,1 m na horizontal). Em lugar isolado, usa a grade retangular original. Não permite colocar outro toco a menos de 1 m. Um círculo verde/vermelho no chão mostra a posição exata e se ela está livre antes de confirmar com X. Y devolve ao ponto anterior. A direção de soltura segue os quatro eixos, evitando deslocamentos diagonais irregulares. O multiplayer mantém a verificação de alteração concorrente e usa protocolo atualizado para a migração da cerca.
+
+## Carroça e bairro de serviços — 0.48
+
+- O cavalo conduz a direção; o eixo da carroça segue o engate pela mesma restrição de barra usada no trator, com atraso nas curvas, articulação limitada e giro das rodas pelo deslocamento real. O motorista acompanha o banco e a rotação da carroça. A navegação verifica o espaço da carroça nas curvas.
+- Bairro dos seis serviços ampliado de 24 para 52 metros de comprimento. Prédios agora separados por 17 metros, com jardins entre as quadras e detalhes diferentes: sacos de ração, toldo veterinário, varal de roupas, cavalete, comedouro de aves e pneus/ferramentas. Cada entrada tem placa de madeira com ícone ilustrado próprio. Portas, saídas, nomes e pontos de retorno usam as novas coordenadas.
+- Sono com aproximação da cama, sentar, dobrar os joelhos, deitar e cobrir o corpo; despertar faz o movimento inverso.
+- Atalho exclusivo da interface de desenvolvimento: abrir o endereço com ?dev=1, depois Menu → Desenvolvedor · estação ou Alt+Shift+S. Escolha primavera/verão/outono/inverno sem avançar dias. Não aparece no endereço normal e só opera em modo solo. Por ser um jogo estático, o parâmetro habilita a interface local de desenvolvimento; não é autenticação ou privilégio de servidor.
+- No jogo normal, cada estação tem 30 dias. Dormir avança um dia; as setas do calendário somente consultam outras estações.
+
+## Serviços, cavalos e produção — 0.47
+
+- Bairro de serviços ao sul da vila: Agro Santa Cruz, Veterinária do Vale, Ateliê da Rosa, Escola de Artes, Clube de Observadores de Aves e Oficina Mecânica, todos com interiores e interações. Equipamentos de ordenha/tosquia, remédios, queijeira e máquina de maionese têm compras e uso reais. Roupas do ateliê são combinações dos modelos e cores existentes.
+- Haras Boa Esperança acessível pelo caminho do vale ou mapa, com pista, cavalos em treino, sede, compra/venda e acessórios. Cavalo com carroça fornecido à fazenda nesta entrega; direcional conduz, Y desmonta. Não entra montado nos interiores. Tomé oferece abrigo e carroça; abrigo exige limpar o canto sudeste. Nesta versão, o dono da sala conduz o cavalo compartilhado.
+- Cada galinha saudável presente no celeiro disponibiliza um ovo por manhã. Vacas alimentadas e saudáveis dão leite uma vez por dia; ovelhas podem ser tosquiadas a cada sete dias, mediante compra das ferramentas. O produto vai às mãos/mochila e pode ser vendido ou processado no quarto de ferramentas.
+- Sementes são pacotes individuais na mochila. Mercado entrega à mochila; baús permitem retirar vários sacos/espécies sem devolver os anteriores. Selecione o pacote na mochila para plantar. Estoques antigos são preservados; excesso que não cabe fica no baú.
+- Saúde: dois dias consecutivos sem alimentar causam doença; seis dias seguintes sem tratamento levam à morte. Remédio ou consulta veterinária cura a doença. Caderno, marcadores e aviso ao despertar mostram a situação. A regra é uma adaptação com prazo explícito, inspirada no ciclo fome/doença/remédio do Harvest Moon clássico; não se apresenta como prazo universal de todas as versões. Fonte de referência: https://harvestmoon.fandom.com/wiki/Cows_(HM).
+- Biblioteca oferece seis manuais de jogo nos livros. Clínica da Clara com paredes claras, cama azul piscina e jaleco. Descanso com pose de sentar/deitar, cobertor por cima e cachorro melhor acomodado na poltrona.
+- Corrige a face invertida do piso da ponte e aumenta a presença das flores dos jardins. Sem novos downloads de imagens ou áudio e sem pós-processamento adicional.
+
+Validação curta de inventário, ovos, produção, remédio, morte após doença, seis portas/serviços, acesso da rua e construção dos cenários passou. Sintaxe e importações conferidas; sem bateria ampla, teste multiplayer entre dois aparelhos ou aferição de FPS nesta rodada.
+
+## Vila ampliada e cultivo visível — 0.46
+
+Vila Santa Cruz passa de 34×30 para 34×60, mantendo a praça e os edifícios originais. Uma escada de pedra com corrimãos leva aos jardins em canteiros triangulares arredondados e círculos floridos. O riacho desce pela margem da cidade, passa por uma ponte de pedra de 6,6 m com guarda-corpos de madeira e segue entre os bairros. Depois da ponte há quatro casas visitáveis e árvores frutíferas. A passagem superior para a montanha também cruza o riacho. Relevo, escadas e pontes compartilham as alturas usadas por jogador, cachorro, trator e visitantes.
+
+Copas da praça mais preenchidas, conservando o porte e a vista do coreto. Cartões de folhas com normal map procedural e vento, sem aumentar chamadas de desenho por folha. O telhado texturizado fica opaco ao chegar; só reduz a 50% quando o jogador alcança o centro e volta ao normal ao sair da plataforma.
+
+Sementes recém-plantadas são maiores e ficam acima do relevo do canteiro. É possível regar a neve sobre a área de cultivo: a máscara do mesmo quadrado fica visivelmente mais escura e volta ao normal no dia seguinte. A pá continua necessária para preparar a terra coberta.
+
+Link principal de publicação: https://tonbatista.github.io/harvestao-diorama/
+
+## Praça e fachada — 0.45
+
+A janela frontal da sede Alforria, com venezianas e jardineira, passou para o outro lado da porta; o emblema circular mantém sua posição. As quatro árvores centrais ficaram próximas da altura do coreto, com copas menores e mais abertas. Folhagem usa cartões com textura alpha, recortes de folhas e leve balanço ao vento; flores e pétalas continuam com quantidade limitada de instâncias.
+
+O coreto ganhou plataforma octogonal maior, entrada livre, dois degraus e piso de 45 cm. Colisões ficam nos postes e guarda-corpos. Personagem, companheiro, câmera e visitantes usam a mesma altura do piso; o terreno sob a estrutura continua no nível original. O telhado fica translúcido quando o jogador sobe, permitindo enxergar o avatar.
+
+Conferência focada de sintaxe, altura dos degraus, entrada livre e limite lateral do coreto concluída. Sem bateria ampla de testes.
+
+## Vila Santa Cruz e Praça São Benedito — 0.44
+
+São Bento Grande, gravação fornecida pelo criador, acompanha a roda na praia por proximidade e o salão do Grupo Alforria. O volume respeita música, silêncio, pausa e aba oculta. O emblema externo agora é circular, menor e fica ao lado da porta. O mapa aceita rolagem por toque sobre todos os seus elementos.
+
+A Praça São Benedito substitui a fonte por um coreto de madeira e recebe quatro grandes árvores floridas nos canteiros centrais. Cerejeiras distribuídas pelos exteriores florescem no inverno; pétalas usam um conjunto fixo de instâncias, com menor quantidade em telas de toque. Troncos, copas e Laika são agrupados para reduzir desenhos.
+
+Os caminhos de ligação abrigam 21 residências de moradores, com portas, interiores, móveis e conversas. Na ligação entre o lago e a montanha fica a casa verde da Vó Cidinha e do Vô Batista, cercada de plantas e flores, com parabólica grande no telhado e a cachorrinha Laika, branca com manchas castanho-claras.
+
+Bancos da capela voltados para o altar e cadeiras da Rosa para suas mesas. O cachorro companheiro só entra na casa principal; nos outros interiores aguarda no exterior e reaparece no local de espera ao retornar. A identificação da residência também diferencia visitantes no multiplayer. Progresso existente preservado.
+
+
+## Grupo Alforria, família e rebanho livre — 0.43
+
+Corrige o travamento provocado pelas buscas de caminho do rebanho: movimento local com limite de trabalho por quadro, saída sem fila e passeios independentes. Trajetos antigos presos são recuperados ao carregar, sem apagar o progresso, dinheiro, plantações, cuidados ou passageiro da carreta. A máscara dos canteiros junto às construções é calculada somente quando a organização muda.
+
+A Praia das Conchas passou de 34×30 para 68×30. A casa do Grupo Alforria fica elevada sobre pilares, com escada de seis degraus e varanda. O jogador sobe e entra no salão de madeira com roda desenhada no chão, berimbaus na parede e atabaque. O portão de volta à fazenda mudou para a borda oeste da praia.
+
+Uniformes e placas usam o logo fornecido do Grupo Alforria. Mestre Emerson tem novo retrato inspirado na referência. O menino chama-se Thomas. Vó Cidinha cuida da Capela Sta Julieta; seu marido, Vô Batista, pesca no lago. Ambos têm modelos, falas e retratos próprios. Só as ilustrações foram incluídas na publicação.
+
+## Moradores e roda de capoeira — 0.42
+
+O vale passa de 11 para 23 moradores únicos. Mestre Emerson, Bianca, Mônica, Nico, Dandara e Davi formam uma roda animada na Praia das Conchas, com berimbau, camiseta branca, calça azul e cordões individuais. Helena, Caio, Cecília, Ravi, Aurora e Seu Antônio se espalham pela vila, montanha, lago e praia; alguns também visitam os interiores. Todos têm nome, conversa própria e retrato ilustrado grande. Um atlas de 306 KB reúne os 12 retratos novos; os modelos usam partes agrupadas para reduzir chamadas de desenho.
+
+A expansão da praia e a academia foram concluídas na versão 0.43. Preserva a correção do celeiro e os sons publicados na 0.41.
+
+## Caminhos, inverno e vida no vale — versão 0.36
+
+A entrada da fazenda mantém o portão artesanal sobre terra normal, sem o piso de pedras.
+
+Portais entre exteriores dão acesso a trilhas percorríveis, com curvas, árvores e paisagem relacionada ao destino. Os cenários continuam carregados por trecho para preservar desempenho; o mapa continua disponível para viagem direta. Montanha e vila recebem relevo físico, e personagens, trator, cachorro e câmera acompanham a altura. A subida reduz suavemente a velocidade. Não há escalada livre de paredões nesta versão.
+
+No inverno, o ícone de boneco de neve ou Menu → Atividades e inverno permite preparar bolas. Caminhe para fazê-las crescer e pressione X para arremessar. Para montar um boneco na fazenda, leve cada bola ao mesmo lugar e escolha Montar: base de70cm, corpo de50cm e cabeça de32cm. O boneco permanece durante o inverno.
+
+O mercado vende guirlanda40G, enfeites60G e luzes80G. Na montanha, equipe o machado junto ao pinheiro de manejo da trilha para recolhê-lo. Em casa, monte a árvore pelo menu de atividades após comprar os enfeites. A guirlanda e as luzes decoram a parede. O guarda-roupa dentro da casa oferece roupa de trabalho, casacos de inverno e roupa de praia; o casaco também está na personalização.
+
+Joana, Rosa, Clara, Miguel, Bento, Lia e Tomé têm retratos originais nas conversas. A agenda marca brincadeiras de inverno nos dias5 e15 e a noite de Natal no dia24. As atividades ficam acessíveis durante a estação, sem obrigar esperar um festival. Preparativos e decoração da propriedade são compartilhados; a organização fica a cargo do anfitrião.
+
+Referência visual consultada: [Coral Island, página oficial da Stairway Games](https://blog.stairwaygames.com/coral-island). Os modelos e retratos são próprios. Ambos os jogadores devem abrir a versão0.36.
+
+## Trator e portas — versão 0.35
+
+Nenhuma construção pode ser acessada enquanto o jogador dirige, incluindo o farol e as opções de viagem pelo mapa. Para entrar a pé, estacione o trator a mais de 3,2 m do portal; a carreta acoplada também precisa deixar a porta livre. Subir no trator próximo a um portal tem prioridade sobre entrar no prédio. Ao descer, o jogador é colocado fora das áreas de ativação.
+
+Na primeira abertura desta versão, o trator e a carreta são recuperados para um espaço livre da fazenda principal, com o motor de corte desligado. A organização da fazenda, os animais transportados e o progresso são preservados. A recuperação é salva e não volta a mudar o estacionamento nas próximas aberturas. O descanso automático por exaustão desmonta o jogador antes de levá-lo para casa.
+
+Nenhum teste foi executado nesta atualização, conforme solicitado.
+
+## Correções e entrada rural — versão 0.34
+
+Corrige a matriz dos modelos agrupados para que todos os seis objetos editáveis apareçam na posição e rotação salvas, junto aos seus colisores, portas e caminhos. No multiplayer, as saídas também acompanham a construção quando o visitante já está dentro dela.
+
+A entrada para a vila ganhou pedras irregulares com grama nas juntas, flores, pilares e portão artesanal de madeira aberto. O centro fica livre para o trator; os sólidos da entrada permanecem ao reorganizar a fazenda. Não são necessários novos downloads de imagens: o piso é uma textura procedural compartilhada.
+
+Conferência pontual de 30 transformações dos seis modelos confirmou alinhamento com portas e colisores; corredor do portão livre para o trator. Progresso e organização salvos são preservados.
+
+## Novidades da versão 0.33
+
+Saídas entre cenários nas bordas, com caminhos claros e placas discretas. As portas continuam ligadas aos seus prédios. Casa, celeiro e quarto de ferramentas começam junto à borda norte, deixando o centro livre para plantar.
+
+Menu → Organizar construções abre um mapa arrastável. Mova e gire a casa, celeiro, quarto de ferramentas, poço, caixa de entregas e conjunto de árvores com rede. Ajustes numéricos e rotação livre também estão disponíveis; Salvar aplica a mudança e Cancelar preserva a organização anterior. Portas, caminhos e rotas dos animais acompanham a posição. O editor protege plantações, árvores, acessos e outros objetos. No multiplayer, o dono organiza e todos veem a alteração.
+
+O quarto de ferramentas tem prateleiras para equipar/guardar ferramentas, acesso ao mesmo estoque de sementes da casa e freezer com duas bebidas por dia. A rede permite deitar e descansar: três pausas por dia, com recuperação de energia e avanço de 30 minutos. Árvores e rede formam um conjunto editável.
+
+Zoom distante até 8%, centralizando a fazenda para vê-la inteira, inclusive em tela estreita. Novas árvores na faixa de grama da borda. Construções são agrupadas por material e caminhos só se atualizam quando o layout muda. Progresso e culturas existentes são preservados. Para multiplayer, os dois jogadores devem abrir a versão 0.33.
+
+## Novidades da versão 0.32
+
+A fazenda principal tem uma grade de 36 × 38: quase toda a área interna pode ser preparada e plantada, preservando construções, acessos e uma borda de grama com flores. O cultivo antigo é migrado sem mudar de lugar nem perder rega ou crescimento. Os terrenos do lago mantêm sua grade própria.
+
+As portas e passagens mudam de cenário por aproximação. Na chegada, o portal só volta a funcionar depois que o jogador sai de sua área, evitando retornos involuntários. As placas são menores e se acomodam ao lado dos caminhos; o sino do celeiro permanece interativo.
+
+A grade ampliada também é compartilhada no multiplayer. Ambos os jogadores precisam abrir a versão 0.32.
+
+## Novidades da versão 0.31
+
+Capa fornecida pelo jogador, com arte inteira e menu após tocar ou apertar X. Multiplayer aparece apenas no item da lista e no menu de pausa. Removidos os avisos visuais de ação, as legendas sob X/Y e o botão flutuante dos cantos; os sons continuam disponíveis.
+
+A fazenda principal passou de 24 × 26 para 48 × 52, quatro vezes a área total. Canteiros, construções, itens e terrenos do lago continuam preservados. A área adicional é pasto livre. Animais atravessam os tocos baixos da borda e continuam respeitando paredes e plantações.
+
+Com mãos livres, aproxime-se de um toco e aperte X para pegar. X coloca em um espaço livre à frente; Y cancela. As 41 posições ficam salvas e são compartilhadas no multiplayer, com proteção contra movimentos simultâneos. Três malhas instanciadas mantêm o custo da cerca baixo. Os dois jogadores devem abrir o link da versão 0.31.
+
+## Cuidar dos animais
+
+No celeiro, pegue uma porção no depósito de feno e leve ao cocho indicado de um animal. Cada um tem seu próprio lugar; as galinhas têm compartimentos separados no comedouro. A porção aparece nas mãos e é consumida ao alimentar. Devolva o feno ao depósito se quiser sair sem usá-lo.
+
+Três vacas, duas ovelhas e três galinhas possuem nomes, fome e felicidade persistentes. Os marcadores sobre os animais mostram nome, alimentação e cinco corações; o botão de cuidados lista todos. Alimentar aumenta 8 pontos de felicidade; carinho aumenta 3, uma vez ao dia. Dormir sem alimentar reduz 10. Na manhã seguinte todos precisam de comida novamente. Os pintinhos são decorativos. Os ninhos permitem recolher ovos uma vez por dia.
+
+## Mercado e quatro estações
+
+Entre no mercado pela porta na Vila Mineral ou pelo mapa. Caminhe até uma das quatro prateleiras e use B/E para escolher e comprar sementes. O preço é descontado do dinheiro e o saco entra na mochila. Pode comprar antecipadamente para guardar; só pode plantar na estação correspondente.
+
+- Primavera: nabo, batata, pepino e morango.
+- Verão: tomate, milho, cebola, abóbora e abacaxi.
+- Outono: batata-doce, cenoura, berinjela e espinafre.
+- Inverno: rabanete de inverno, couve e alho-poró.
+
+As espécies de inverno são uma adaptação deste jogo. Cada saco semeia até nove quadrados preparados. A mochila possui filtros por estação para equipar sementes disponíveis. Os canteiros são limpos na virada de estação.
+
+## Explore o vale
+
+Casa mobiliada com cozinha, lareira, cama, TV ilustrada, parquet e tapetes; celeiro; Vila Mineral com sete edifícios e moradores; mercado; montanha com bosque, cachoeira em dois níveis, mina e águas termais; praia com píer, barco de pesca, farol e conchas. Use as portas/placas ou o mapa. Somente a área visitada é desenhada.
+
+O acabamento combina copas de folhas compartilhadas, relva instanciada, caminhos de pedra texturizados, fachadas de pedra e madeira, telhas com musgo, água turquesa e espuma. Detalhes estáticos são agrupados, materiais reutilizados e a resolução/sombras ajustadas para controlar o custo. Não há novos passes de pós-processamento.
+
+## Controles
+
+WASD/setas movem. R alterna corrida/caminhada; Shift corre. E/B interage. Espaço/A usa a ferramenta na fazenda e interage nos interiores. M abre mapa, I mochila, F guarda colheita, Q troca ferramenta. No celular, use o direcional e os botões na tela.
+
+O zoom fica discreto à esquerda: apenas + e − claros quando inativo. Toque ou aproxime o ponteiro para revelar a barra; roda do mouse, pinça e teclas +/− também funcionam. 0 ou a porcentagem restauram 100%. Intervalo 70%–340%.
+
+## Desenvolvimento
+
+Sirva esta pasta por HTTP. Exige WebGL e não precisa instalar dependências para jogar. `npm test` executa regras de cultivo, estações e cuidados; `npm run check` verifica sintaxe. Saves da versão 2 continuam compatíveis. Os interiores pausam o relógio. Esta é uma implementação própria dos sistemas de cuidado e mercado: rotinas sociais completas, festivais e mineração profunda ainda não estão implementados.
+
+Código editado em `outputs/harvestao-v031`. Three.js: licença MIT em `THREE-LICENSE.txt`.
+## Câmera, aves e encontros
+
+Equipe a câmera (ferramenta 8) e enquadre uma ave ou animal. A/Espaço ou o obturador fotografa. P ou o botão do caderno abre o registro: cada espécie recebe um check, uma miniatura real do jogo, data, local e contagem. Os registros acompanham o save e podem ser exportados no menu.
+
+Procure o Urutau no toco do bosque da Montanha da Lua. Bem-te-vis e sabiás aparecem em poleiros na fazenda, vila, montanha e caminho da praia; gaivotas passam pelo cais. Os animais do celeiro, a cobra e a aranha do bosque também podem ser fotografados. A coleção começa com 9 entradas, das quais 4 são aves. O catálogo utiliza IDs estáveis, busca e paginação para ampliar a lista depois; não contém milhares de modelos nesta versão.
+
+Cantos naturais gravados são carregados sob demanda quando há uma ave próxima, após o primeiro toque/tecla. Quando o canto começa, um ! aparece por cerca de 1,5 segundo sobre o personagem. Cobra e aranha geram o aviso visual quando encontradas de perto; não têm ataques nesta versão. Os cantos seguem os controles de áudio no menu. Os áudios dependem de conexão com Wikimedia Commons: [autores, licenças e fontes](AUDIO-CREDITS.md).
+
+Para manter o save leve, metadados de espécies são preservados, mas as miniaturas têm limite de quantidade e tamanho. Novas fotografias não geram cópias ilimitadas da mesma espécie.
+
+## Sons do vale — versão 0.18
+
+Dez temas originais acompanham as quatro estações, vila, interiores, bosque, praia, noite e chuva. Instrumentação suave de flauta, cordas dedilhadas, baixo e percussão leve, com variações entre ciclos e transições de volume ao mudar de lugar. As composições são próprias, com clima de jogos de fazenda clássicos.
+
+Vento, água corrente, ondas, chuva e lareira são ambientes procedurais leves. Música e ambientes são sintetizados em tempo real por Web Audio, sem downloads de trilha. Os cantos naturais continuam usando os arquivos e créditos em AUDIO-CREDITS.md.
+
+Clique ou toque para iniciar o som. Abra Menu → Som e música para ajustar volume geral, música e ambiente, silenciar tudo ou desligar os cantos. Preferências ficam salvas. Menus reduzem o volume, e a aba oculta suspende a síntese.
+
+## Lago, terrenos e trator — versão 0.19
+Abra o mapa para visitar o Lago dos Ipês, ligado à Montanha da Lua. Há três terrenos de 24 × 26: Recanto dos Salgueiros (300 G), Margem do Amanhecer (1.800 G) e Clareira dos Pinheiros (2.400 G). Aproxime-se da placa e use B/E para comprar. Cada propriedade tem seus próprios 144 canteiros persistentes. Limpe ervas com mãos/foice, galhos com machado e pedras com martelo. O lenhador Tomé tem uma oficina junto ao lago e pode ser chamado pela caixa de encomendas do terreno. Casa: 450 G + 12 madeiras; celeiro: 650 G + 18 madeiras. Limpe os quatro obstáculos do local antes de construir. A casa e o celeiro abrem interiores; poço e caixa de vendas funcionam na nova fazenda. Todas as plantações continuam crescendo ao dormir.
+
+O trator verde já está estacionado no acesso leste da fazenda, perto do poço. B/E entra e sai; direcional/WASD dirigem; A/Espaço alterna a roçadeira. Ela corta apenas ervas e preserva culturas. O botão Trator e carreta permite acoplar a carretinha e transportar um animal por vez. Aproxime-se do portão do celeiro para embarcar; desembarque na fazenda ou em uma propriedade com celeiro construído. Animais transferidos ficam visíveis no pasto, mantêm fome/amizade e podem ser alimentados, acariciados e fotografados. Leve o trator aos terrenos pelo mapa. O progresso permanece no save, sem substituir a fazenda original. Veículos e pastos usam geometrias compartilhadas e só a região ativa é desenhada.
+## Sininho e rebanho — versão 0.20
+Clique na plaquinha pequena do celeiro, ou aproxime-se e use B/E, para abrir Celeiro e pasto. O sininho chama os animais para fora; toque novamente após a caminhada para recolher. Eles caminham pela porta e pelo acesso lateral até o pasto, com pernas animadas e saídas escalonadas. Animais na carretinha ou em outras propriedades não são chamados. A caminhada é salva e retoma ao recarregar. O som respeita os volumes e silenciar tudo.
+
+Ao desembarcar da carretinha, escolha Levar para o celeiro ou Deixar no pasto. Cada terreno mantém seus próprios animais dentro ou fora. Os cuidados e a amizade permanecem. Placas dos imóveis ficaram menores: clique nelas para ler o texto; não há mais texto grande sobre os edifícios. As placas do celeiro também mostram o sininho.
+## Agenda, paisagem e movimento — versão 0.21
+Os atalhos superiores ficam pequenos e translúcidos após alguns segundos, sem perder o primeiro toque ou a área de clique. Hover, foco pelo teclado e toque revelam os botões. Direcional, A/B e ferramentas mantêm a visibilidade. Clique no relógio para abrir a Agenda do vale: 30 dias, navegação pelas quatro estações e anos, hoje, previsão de chuva, coleta diária às17h e últimos dias de plantio calculados pelo crescimento. Anote, edite e apague compromissos pessoais; a agenda acompanha o progresso. Os marcadores correspondem às regras atuais do jogo, sem anunciar festivais ainda não implementados.
+
+Terrenos do lago usam o mesmo atlas e relevo de terra e relva da fazenda principal, cercados por vegetação, trilhas e margens mais densas. Entrar em uma propriedade ainda vazia mostra terra a limpar, mato, pedras e galhos. Casa e celeiro só aparecem quando construídos; poço e entregas são liberados com a casa. A visão do lago acompanha a limpeza e as construções de cada terreno. Relva instanciada, materiais compartilhados e menor densidade em telas de toque mantêm a paisagem leve.
+
+A carreta tem eixo independente ligado ao engate por uma barra articulada de comprimento fixo; acompanha as curvas com atraso natural e mantém posição ao estacionar/desacoplar. Animais usam fila e distâncias conforme o tamanho do corpo, aguardam passagem livre e voltam aos oito lugares corretos do celeiro. Do lado de fora exploram os espaços livres da fazenda, evitando plantas, obstáculos, o personagem e os outros animais. Rotas e posições permanecem no save.
+## As quatro estações — versão 0.26
+Os cenários externos mudam automaticamente com a estação salva no calendário, inclusive fazenda, terrenos do lago, vila, montanha e praia. A primavera tem verdes claros e pétalas discretas; o verão ganha verdes mais intensos e pólen; o outono tem copas em laranja, dourado e vermelho, folhas caindo e tapetes de folhas perto das árvores; o inverno cobre chão, relva, copas, telhados e superfícies altas com neve, flocos brancos e luz mais fria. Pinheiros mantêm sua identidade e recebem neve no inverno. Água e interiores permanecem apropriados ao ambiente; o personagem e os animais preservam suas cores.
+
+A mudança usa uniformes de materiais, com texturas originais preservadas e sem novo passe de pós-processamento. Folhas/flocos têm buffers fixos e contagens menores em dispositivos de toque; o tapete de folhas só se recompõe ao trocar de área. Os interiores suspendem os efeitos. Os materiais temporários são restaurados e descartados ao viajar. As malhas instanciadas das paisagens são preservadas pelo agrupamento da região. O símbolo do tempo e a agenda reconhecem neve no inverno; a trilha das estações continua funcionando.
+Novidade da versão 0.26: dez interiores próprios, acessíveis pela porta de cada imóvel. Capela com vitral e lembranças, biblioteca com herbário e cadernos de aves, clínica com botica, pousada com café e quarto, ateliê da Rosa, casa do pescador com redes e conchas, ferraria com forja, oficina do Tomé com projetos de construção, galeria de entrada da mina e farol com escada e lente giratória. Moradores conversam, objetos contam pequenas histórias e as saídas levam ao exterior correto. Após a primeira visita, o lugar aparece entre os destinos do mapa. Pisos, madeira, móveis e materiais são compartilhados; somente o cenário ativo fica carregado e os detalhes animados são limitados.
+Na versão 0.26 o menu inicial permite escolher nome do jogador e da fazenda, avatar masculino/feminino e cor do cabelo, com prévia e edição posterior em Menu → Meu perfil e avatar. O avatar mantém o rig e os movimentos; a opção feminina acrescenta tranças. Os perfis são migrados sem apagar a fazenda. Caramelo é um cachorro companheiro que acompanha viagens e interiores, contorna obstáculos e late para afastar cobras/aranhas próximas, que se recolhem temporariamente e podem voltar mais tarde. O trator tem motor procedural que acompanha a velocidade e a roçadeira, respeitando volume/mute/pausa. Rodas deixam marcas discretas na terra/grama, com altura ajustada ao terreno, limite de instâncias e desaparecimento em 26 segundos. Não são necessários novos downloads de áudio ou imagens.
+Versão 0.26: controles X para pegar, guardar, usar e entregar; Y cancela ou retira o último item da mochila com mãos vazias. O personagem corre sempre. A mochila tem 24 espaços com miniaturas e ovos podem ser carregados, guardados e vendidos. Sementes antigas e compras ficam no baú dentro de casa; retire um pacote antes de plantar. Segure X com o regador por 450ms para molhar até três quadrados; a terra molhada fica bem mais escura. O cachorro tem cauda curta, nome e cinco pelagens configuráveis; passeia pela fazenda, responde ao assobio e segue por oito segundos. O botão perto do trator usa o arquivo Assobio-1.ogg fornecido pelo usuário e um latido em seguida. X com as mãos livres perto dele faz carinho na barriga e aparece um coração. Carreta vazia recebe o cachorro; com outro animal, ele acompanha ao lado. O áudio do assobio está em dog-whistle.ogg. Esta atualização teve apenas checagem de sintaxe: a pedido do usuário, nenhuma bateria de testes foi executada.
+## Novidades da versão 0.26
+
+Menu → Meu perfil e avatar: escolha boné, chapéu de palha, touca ou cabelo sem chapéu; jardineira, camisa camponesa e vestido feminino, com cores de camisa e roupa. As escolhas ficam no save e conservam os movimentos do avatar.
+
+O assobio mostra apenas o desenho do cachorro, ao lado do trator. Os dois controles ficam discretos em repouso e realçam ao usar. A televisão foi colocada na parede lateral da sala, sobre um móvel baixo, com a tela voltada para dentro; X abre a previsão do tempo.
+
+Cacau, a galinha; Pingo, o pato; e Rubi, o porquinho passeiam pela fazenda e pelos terrenos, com pequenas animações. Com as mãos livres, use X perto de um deles para fazer carinho e ver um coração.
+
+Nas noites dos dias 3, 6, 9 e assim por diante, uma raposa ou um ouriço pode visitar a borda da fazenda após alguns segundos. O cachorro percebe e dá o alerta. Use X perto dele ou do visitante para escolher entre observar e pedir que o acompanhe de volta ao bosque, sem ferir. O encontro acontece uma vez por propriedade/noite e o visitante também parte sozinho.
+
+Os três pets compartilham geometrias leves; somente um visitante aparece de cada vez. Não foram acrescentados downloads ou áudio de terceiros. Nesta rodada foi feita apenas conferência de sintaxe, sem executar a bateria de testes, conforme solicitado.
+## Novidades da versão 0.27
+
+Na Praia das Conchas, entre no Farol da Maré e suba pela escada do vigia. A galeria superior é circular, com a lanterna ao centro, piso de tábuas, janelas panorâmicas e uma luneta de latão presa à janela. Há vista do mar de dia e à noite, diário de bordo e pequenos detalhes do vigia.
+
+Use X perto da luneta para observar o mar em primeira pessoa. Arraste, use as setas laterais ou ←/→; amplie entre1× e6× com a barra, +/−, roda do mouse ou pinça no celular. A ilha distante tem árvores, rochedos, uma ruína e uma pequena queda de água. Y, Esc ou × volta à galeria. A cena da luneta só carrega enquanto é usada, tem resolução limitada e libera seus recursos ao sair.
+
+Trator: os botões mostram estado e motivos de bloqueio, atualizam carreta/carga imediatamente e evitam toque duplo. É possível acoplar e transportar pelo menu do celeiro quando o trator está estacionado perto do portão. O desembarque para o pasto usa corretamente a região externa. O cachorro acompanha pela lateral com carreta ocupada, evita a carroceria e conserva a escolha do lado quando há espaço. O assobio foi reduzido para aproximadamente32% do volume anterior, respeitando os controles de áudio.
+
+Somente conferência de sintaxe nesta rodada; não foi executada a bateria de testes, conforme pedido de priorizar publicação.
+## Novidades da versão 0.28
+
+Colisões revisadas na fazenda, terrenos, vila, montanha, praia, lago, mercado e interiores. Tocos baixos da borda da plantação agora provocam um pulinho automático ao correr na direção deles com as mãos livres. O personagem sobe de verdade e só salta se houver caminho e chão livre para pousar. Trator, paredes, móveis e obstáculos de limpeza continuam sólidos.
+
+Ajustadas cercas, móveis rodados, barris, pilhas, vasos, bases e veículos estacionados. A água do lago e da praia bloqueia a passagem fora das pontes e do píer. O save utiliza uma posição segura no chão durante o salto. Veja a [revisão de colisões](COLISOES.md) para os achados e os limites da análise.
+## Atualização 0.37
+
+- Mochila em painéis de equipamento e itens, com miniaturas, paginação e seleção por teclado/toque. Preserva os 24 espaços e as sementes no baú.
+- Retratos ilustrados próprios para os onze moradores, em dois atlas compactos carregados nas conversas.
+- Guarda-roupa na parede abre a personalização completa; jaqueta com mangas e touca com protetores de orelha/pompom, cores editáveis.
+- Pá de neve nas ferramentas e no quarto de ferramentas. Segure X e caminhe para limpar neve e aumentar a bola; solte junto ao boneco para montar cada etapa quando atingir 70/50/32 cm. Um toque curto arremessa a bola menor. No dia seguinte a neve cobre novamente os canteiros. A roçadeira também remove a neve.
+- Árvore de Natal grande no quintal, dezesseis enfeites individuais, estrela final e luzes noturnas. Guirlandas/luzes nas fachadas ou no quintal. Compras no mercado e pinheiro de manejo na montanha.
+- Relevo aplicado antes do agrupamento das peças, com superfícies subdivididas e construções rígidas. Personagem e chão compartilham a altura.
+- Trilhas curvas de terra com vegetação/florzinhas e saídas largas que alcançam o limite do mapa. Direção física compartilhada entre viajantes vindos de lados opostos.
+- Descanso com fade lento, breve melodia de piano, cão na poltrona e despertar com canto de galo sintetizado; galo dourado no quintal.
+
+Ações que mudam neve/boneco/decoração ficam com o anfitrião no multiplayer. A revisão desta rodada limitou-se à sintaxe, ligações entre módulos e abertura publicada; não foi executada bateria de testes. Os cantos e a melodia de descanso são sintetizados e respeitam as preferências de áudio.
+
+## Ajustes 0.38
+
+Enfeites de Natal saem do menu geral: clique no pinheiro do quintal para abrir suas opções. O pinheiro de manejo recolhido na montanha já é levado ao quintal. Retratos dos moradores aparecem grandes, acima e fora da caixa de diálogo (inclusive Tomé), adaptados a telas pequenas.
+
+Segurar X com a pá e caminhar faz a bola crescer. Soltar X deixa a bola crescida parada no chão; apenas a bola inicial, sem crescimento, desaparece. Bolas ficam salvas durante o inverno, inclusive entre visitas aos cenários. Com mãos livres, segure X perto de uma delas para retomar o crescimento. As bolas que atingem os tamanhos das três etapas formam a base, o corpo e a cabeça junto do boneco. O trator pode passar sobre o boneco e as bolas soltas para desfazê-los. As bolas não seguem o avatar depois de soltas.
+
+## Ajustes 0.39
+
+Aproxime-se do pinheiro do quintal e aperte X para abrir as opções de Natal; funciona com ferramentas equipadas, sem depender do clique na árvore. Bolas soltas somem após 3 segundos reais, inclusive com o jogo pausado; as etapas já montadas do boneco permanecem. Um toque rápido em X com a pá arremessa a bola pequena, que desaparece após 2 segundos. Bolas da versão anterior recebem o novo prazo de 3 segundos ao carregar. O anfitrião controla a remoção dos objetos compartilhados no multiplayer.
+
+## Ajustes 0.40
+
+- Bolas maiores soltas duram cinco segundos; partes montadas do boneco continuam preservadas e bolas pequenas arremessadas continuam durando dois segundos.
+- Barra de ferramentas com arraste horizontal por toque ou mouse; o gesto não equipa a ferramenta por acidente. Seleção por teclado revela a ferramenta, inclusive a pá de neve. A barra também responde à roda do mouse.
+- Canto da manhã reproduz `rooster-v040.mp3`, o áudio do galo fornecido pelo criador, respeitando volume, silêncio e aba oculta.
+- Caderno com placa de madeira e papel envelhecido, inspirado na referência enviada. Resumo com energia, dinheiro, ganhos, entregas pendentes, madeira, sementes, água, plantios e coleção. Página Animais e pets mostra nome, localização, alimentação diária, carinho e felicidade reais do rebanho; pets têm seu estado/afeto disponível. Fotografias preserva catálogo, busca, filtros e registros. Setas e abas trocam as páginas. Sem porcentagens fictícias: o percentual do cabeçalho corresponde às espécies fotografadas.
