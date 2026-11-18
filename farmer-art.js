@@ -14,9 +14,9 @@ const sphere=new T.SphereGeometry(1,22,16),smallSphere=new T.SphereGeometry(1,8,
 let clothGrain;
 function fineCloth(){
   if(clothGrain)return clothGrain;
-  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#fcfaf5';q.fillRect(0,0,64,64);
-  for(let i=0;i<64;i+=2){q.fillStyle=i%4?'#b5ad8f1c':'#ffffff28';q.fillRect(i,0,1,64);q.fillRect(0,i,64,1)}
-  clothGrain=new T.CanvasTexture(c);clothGrain.colorSpace=T.SRGBColorSpace;clothGrain.wrapS=clothGrain.wrapT=T.RepeatWrapping;clothGrain.repeat.set(4,4);
+  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#fcfaf5';q.fillRect(0,0,256,256);
+  for(let i=0;i<256;i+=2){q.fillStyle=i%4?'#c5bfa40c':'#ffffff18';q.fillRect(i,0,1,256);q.fillRect(0,i,256,1)}
+  clothGrain=new T.CanvasTexture(c);clothGrain.colorSpace=T.SRGBColorSpace;clothGrain.wrapS=clothGrain.wrapT=T.RepeatWrapping;clothGrain.repeat.set(3,3);
   clothGrain.anisotropy=8;
   return clothGrain;
 }
@@ -68,28 +68,26 @@ function lockGeometry(points,width,thickness){
 }
 function wornCanvas(){
   const c=document.createElement('canvas');c.width=c.height=512;const q=c.getContext('2d');
-  const fab=miniatureTexture('fabric',1);if(fab?.image)q.drawImage(fab.image,0,0,128,128);else{q.fillStyle='#c4956e';q.fillRect(0,0,128,128)}
+  const fab=miniatureTexture('fabric',1);if(fab?.image)q.drawImage(fab.image,0,0,512,512);else{q.fillStyle='#c4956e';q.fillRect(0,0,512,512)}
   const noise=n=>{const v=Math.sin(n*127.1+48.3)*43758.5453;return v-Math.floor(v)};
-  for(let i=0;i<36;i++){const x=noise(i)*128,y=noise(i+200)*128,r=3+noise(i+900)*14,g=q.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,i%3?'#fff1d522':'#79664920');g.addColorStop(1,'#ffffff00');q.fillStyle=g;q.fillRect(x-r,y-r,r*2,r*2)}
-  const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(1.4,1.4);map.anisotropy=8;return map;
+  for(let i=0;i<58;i++){const x=noise(i)*512,y=noise(i+200)*512,r=6+noise(i+900)*45,g=q.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,i%3?'#fff1d517':'#79664915');g.addColorStop(1,'#ffffff00');q.fillStyle=g;q.fillRect(x-r,y-r,r*2,r*2)}
+  const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.MirroredRepeatWrapping;map.repeat.set(1.4,1.4);map.anisotropy=8;return map;
 }
 
 // Hand-painted PS1/JRPG face texture with rosy cheeks & soft nose bridge shading
 function complexion(){
-  const c=document.createElement('canvas');c.width=512;c.height=256;const q=c.getContext('2d');q.fillStyle='#fff9ee';q.fillRect(0,0,128,64);
+  const c=document.createElement('canvas');c.width=512;c.height=256;const q=c.getContext('2d');q.fillStyle='#fff9ee';q.fillRect(0,0,512,256);
   for(const x of [.145,.355]){
-    const y=.62,g=q.createRadialGradient(x*128,y*64,0,x*128,y*64,7);
-    g.addColorStop(0,'#d47a6288');g.addColorStop(.55,'#dc8d7455');g.addColorStop(1,'#dfab8a00');
-    q.fillStyle=g;q.fillRect(x*128-8,y*64-8,16,16);
-    // Cute PS1 pixel blush highlights
-    q.fillStyle='#ffe8dc88';q.fillRect(Math.round(x*128)-2,Math.round(y*64)-1,1,1);q.fillRect(Math.round(x*128)+1,Math.round(y*64)-1,1,1);
+    const y=.615,g=q.createRadialGradient(x*512,y*256,0,x*512,y*256,22);
+    g.addColorStop(0,'#d47a6277');g.addColorStop(.5,'#dc8d7444');g.addColorStop(1,'#dfab8a00');
+    q.fillStyle=g;q.fillRect(x*512-24,y*256-24,48,48);
   }
   const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;return tex;
 }
 
 function nubuck(){
-  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#e6decd';q.fillRect(0,0,64,64);
-  for(let i=0;i<700;i++){const n=Math.sin(i*127.1+34.2)*43758.5453,x=Math.floor((n-Math.floor(n))*64),m=Math.sin(i*83.3+91)*17822.11,y=Math.floor((m-Math.floor(m))*64);q.fillStyle=i%3?'#ffffff22':'#68533f1c';q.fillRect(x,y,1,1)}
+  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#e6decd';q.fillRect(0,0,256,256);
+  for(let i=0;i<2400;i++){const n=Math.sin(i*127.1+34.2)*43758.5453,x=Math.floor((n-Math.floor(n))*256),m=Math.sin(i*83.3+91)*17822.11,y=Math.floor((m-Math.floor(m))*256);q.fillStyle=i%3?'#ffffff18':'#68533f14';q.fillRect(x,y,1.2,1.2)}
   const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.anisotropy=8;return tex;
 }
 

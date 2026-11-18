@@ -4,7 +4,7 @@ import * as T from './three.module.js';
 import {createInteriorKit} from './rural-room.js?v=0.50';
 import {ANIMALS,animalStatus,migrateAnimalCare} from './animal-care.js?v=0.52.0';
 import {migrateTransport} from './transport-rules.js?v=0.52.0';
-const palette={oak:'#ae8c5e',dark:'#76543b',trim:'#d0ad79',cream:'#e7dbc3',stone:'#aaa48d',sage:'#829275',violet:'#87718c',iron:'#586361',terracotta:'#b78b65'},roundedCache=new Map();
+const palette={oak:'#ae8c5e',dark:'#634329',trim:'#c9a06a',cream:'#e7dbc3',stone:'#aaa48d',sage:'#829275',violet:'#87718c',iron:'#484f4c',terracotta:'#b78b65'},roundedCache=new Map();
 function rounded(k,p,c,x,y,z,w,h,d,r=.055,kind='plain'){r=Math.min(r,w/2,h/2,d/2);const key=[w,h,d,r].join(':');let g=roundedCache.get(key);if(!g){g=new T.BoxGeometry(w,h,d,3,3,3);const a=g.attributes.position,inner=new T.Vector3(w/2-r,h/2-r,d/2-r),v=new T.Vector3(),q=new T.Vector3();for(let i=0;i<a.count;i++){v.fromBufferAttribute(a,i);q.set(T.MathUtils.clamp(v.x,-inner.x,inner.x),T.MathUtils.clamp(v.y,-inner.y,inner.y),T.MathUtils.clamp(v.z,-inner.z,inner.z));v.sub(q).normalize().multiplyScalar(r).add(q);a.setXYZ(i,v.x,v.y,v.z)}g.computeVertexNormals();g.userData.shared=true;roundedCache.set(key,g)}const o=k.box(p,c,x,y,z,w,h,d,kind);o.geometry=g;o.scale.set(1,1,1);return o}
 function group(parent,x=0,y=0,z=0,angle=0){const g=new T.Group();g.position.set(x,y,z);g.rotation.y=angle;parent.add(g);return g}
 function glow(k,p,color,x,y,z,w,h,d,intensity=.7){const o=k.box(p,color,x,y,z,w,h,d);o.material=o.material.clone();o.material.emissive.set(color);o.material.emissiveIntensity=intensity;o.material.userData.regionOwned=true;o.castShadow=false;return o}
@@ -27,17 +27,173 @@ const bookcase=group(p,-5.46,0,-.25,Math.PI/2);k.box(bookcase,palette.dark,0,.98
 const tvCorner=group(p,-5.12,0,2.72,Math.PI/2);rounded(k,tvCorner,'#b49a70',0,.55,0,1.90,.14,.78,.045,'wood');for(const x of[-.77,.77])for(const z of[-.26,.26])k.box(tvCorner,palette.oak,x,.28,z,.13,.50,.13,'wood');k.box(tvCorner,palette.oak,0,.15,0,1.70,.09,.60,'wood');const tv=group(tvCorner,0,.65,0);rounded(k,tv,'#68716d',0,.40,0,1.3,.88,.52,.085);rounded(k,tv,'#444a42',-.10,.42,.28,.94,.66,.038,.10);weatherScreen(k,tv);for(const y of [.33,.58])k.cyl(tv,'#b8aa88',.49,y,.31,.055,.04).rotation.x=Math.PI/2;k.beam(tv,'#716956',[-.12,.84,0],[-.40,1.22,0],.014,'plain');k.beam(tv,'#716956',[-.1,.84,0],[.28,1.15,0],.014,'plain');k.solid(-5.12,2.72,2.02,.86,{angle:Math.PI/2,height:1.55});
 const chest=group(p,4.8,0,3.6);rounded(k,chest,'#a4875f',0,.38,0,1.6,.74,.85,.045,'wood');rounded(k,chest,'#b99b6d',0,.82,0,1.67,.18,.92,.065,'wood');for(const x of [-.50,.50]){k.box(chest,'#796e52',x,.43,.44,.09,.73,.025);k.box(chest,'#796e52',x,.925,0,.09,.03,.9)}k.box(chest,'#b2a07c',0,.60,.47,.13,.18,.05);k.solid(4.8,3.6,1.72,.96);pot(k,p,-5.25,4.03,.95);pot(k,p,5.25,2.1,1.0);k.box(p,palette.oak,5.63,1.75,-.2,.44,.11,1.6,'wood');basket(k,p,5.64,2.03,-.57,.4,.54);k.cyl(p,'#b49c78',5.62,2.05,.31,.15,.45);
 k.interact({x:-3.7,z:-.08,label:'Dormir e começar outro dia',type:'sleep',data:{name:'Cama'}});k.interact({x:-3.92,z:2.72,label:'Assistir à previsão na TV',type:'television',data:{name:'Televisão',text:'A vida na fazenda segue o ritmo das estações. Cuide dos animais e regue suas plantações todos os dias.'}});k.interact({x:4.35,z:2.62,label:'Abrir baú de sementes',type:'storage',data:{name:'Baú da casa'}});k.portal({x:0,z:4.36,to:'farm',spawn:[.5,-7.0],label:'Sair para a fazenda',radius:.95});return k.finish({id:'house',label:'Sua casa',bounds:[-5.75,5.75,-4.45,4.55],spawn:[0,3.3],indoors:true,viewHeight:11})}
+
 function batchParts(part){part.updateMatrixWorld(true);const inv=part.matrixWorld.clone().invert(),buckets=new Map(),m4=new T.Matrix4(),n3=new T.Matrix3();part.traverse(o=>{if(o.isMesh){const key=o.material.uuid;let a=buckets.get(key);if(!a)buckets.set(key,a={material:o.material,objects:[]});a.objects.push(o)}});const meshes=[];for(const {material,objects} of buckets.values()){let vertices=0,count=0;for(const o of objects){vertices+=o.geometry.attributes.position.count;count+=o.geometry.index?.count||o.geometry.attributes.position.count}const pos=new Float32Array(vertices*3),norm=new Float32Array(vertices*3),uv=new Float32Array(vertices*2),col=material.vertexColors?new Float32Array(vertices*3):null,indices=new (vertices>65535?Uint32Array:Uint16Array)(count);let off=0,ioff=0;for(const o of objects){const g=o.geometry,p=g.attributes.position,nn=g.attributes.normal,uu=g.attributes.uv,cc=g.attributes.color;m4.multiplyMatrices(inv,o.matrixWorld);n3.getNormalMatrix(m4);const v=new T.Vector3(),n=new T.Vector3();for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m4);pos.set([v.x,v.y,v.z],(off+i)*3);if(nn){n.fromBufferAttribute(nn,i).applyMatrix3(n3).normalize();norm.set([n.x,n.y,n.z],(off+i)*3)}if(uu)uv.set([uu.getX(i),uu.getY(i)],(off+i)*2);if(col)col.set(cc?[cc.getX(i),cc.getY(i),cc.getZ(i)]:[1,1,1],(off+i)*3)}const ix=g.index;for(let i=0;i<(ix?.count||p.count);i++)indices[ioff++]=off+(ix?ix.getX(i):i);off+=p.count}const g=new T.BufferGeometry();g.setAttribute('position',new T.BufferAttribute(pos,3));g.setAttribute('normal',new T.BufferAttribute(norm,3));g.setAttribute('uv',new T.BufferAttribute(uv,2));if(col)g.setAttribute('color',new T.BufferAttribute(col,3));g.setIndex(new T.BufferAttribute(indices,1));g.computeBoundingSphere();const m=new T.Mesh(g,material);m.castShadow=true;m.receiveShadow=true;meshes.push(m)}part.clear();for(const m of meshes)part.add(m)}
-function oval(k,p,color,x,y,z,sx,sy,sz,segments=14,rings=9){const g=new T.SphereGeometry(1,segments,rings),o=k.ball(p,color,x,y,z,sx,sy,sz);o.geometry=g;return o}
-function paintedCow(k,p,seed){const g=new T.SphereGeometry(1,22,14),a=g.attributes.position,c=new Float32Array(a.count*3),cream=new T.Color('#e0d8bc'),ink=new T.Color('#565344'),v=new T.Vector3(),patches=[[-.95,.34,.18,.68],[.92,.12,-.48,.63],[-.45,.78,-.52,.53],[.52,-.25,.63,.45],[.13,.58,-.92,.48]];for(let i=0;i<a.count;i++){v.fromBufferAttribute(a,i);let mark=false;for(let j=0;j<patches.length;j++){const q=patches[(j+seed)%patches.length],dx=v.x-q[0],dy=v.y-q[1],dz=v.z-q[2],edge=q[3]+.035*Math.sin(v.z*15+v.y*11+j);if(dx*dx+dy*dy+dz*dz<edge*edge){mark=true;break}}const shade=mark?ink:cream;c.set([shade.r,shade.g,shade.b],i*3)}g.setAttribute('color',new T.BufferAttribute(c,3));const mat=new T.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:.94});mat.userData.regionOwned=true;const body=new T.Mesh(g,mat);body.position.set(0,.94,-.12);body.scale.set(.48,.44,.78);body.castShadow=body.receiveShadow=true;p.add(body)}
-function cow(k,x,z,yaw,name,seed=0,animalId='mimosa'){const animal=group(k.dynamic,x,0,z,yaw),torso=group(animal);paintedCow(k,torso,seed);for(const lx of [-.29,.29])for(const lz of [-.58,.37]){const leg=k.cyl(torso,'#e0d7bd',lx,.40,lz,.108,.68);leg.scale.z*=.90;rounded(k,torso,'#686052',lx,.105,lz+.015,.23,.20,.25,.052)}oval(k,torso,'#be9b88',0,.51,-.20,.21,.17,.24,14,8);const head=group(animal,0,1.08,.69);oval(k,head,'#e4dac0',0,.13,.07,.30,.32,.33,18,12);oval(k,head,'#d1a28c',0,-.015,.31,.31,.19,.20,16,10);for(const s of [-1,1]){const ear=oval(k,head,'#d8cfb3',s*.34,.32,.015,.22,.095,.14,14,9);ear.rotation.z=s*.28;const inner=oval(k,head,'#c49d87',s*.36,.33,.055,.135,.045,.083,12,7);inner.rotation.z=s*.28;oval(k,head,'#34392f',s*.18,.25,.328,.043,.067,.028,12,9);oval(k,head,'#eeead5',s*.17,.276,.352,.012,.015,.009,8,6);oval(k,head,'#976d5e',s*.13,.015,.495,.034,.025,.018,10,7);const horn=new T.Mesh(new T.ConeGeometry(.061,.20,10),new T.MeshStandardMaterial({color:'#c4b28a',roughness:.9}));horn.material.userData.regionOwned=true;horn.position.set(s*.18,.48,-.02);horn.rotation.z=-s*.19;horn.castShadow=true;head.add(horn)}const forelock=oval(k,head,'#8d8160',0,.40,.28,.13,.07,.05,12,8);forelock.rotation.z=.22;const tail=group(animal,0,1.05,-.84);k.beam(tail,'#c8b797',[0,0,0],[.02,-.45,-.06],.026,'plain');oval(k,tail,'#6e6753',.02,-.47,-.06,.065,.12,.065,12,8);batchParts(torso);batchParts(head);batchParts(tail);k.roundSolid(x,z,.72);k.animate((dt,time)=>{torso.scale.y=1+Math.sin(time*2.1+seed)*.009;head.rotation.x=Math.sin(time*.82+seed)*.045;head.rotation.y=Math.sin(time*.39+seed)*.055;tail.rotation.z=Math.sin(time*1.6+seed)*.17;animal.position.z=z+Math.sin(time*.31+seed)*.025});k.interact({x:Math.sign(x)*2.35,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'cow',animalId},radius:1.65});return animal}
-function sheep(k,x,z,yaw,name,seed,animalId='nuvem'){const animal=group(k.dynamic,x,0,z,yaw),body=group(animal);oval(k,body,'#d8d5bd',0,.70,-.08,.42,.38,.60,20,13);for(let i=0;i<12;i++){const a=i*2.4,ring=i<8?.8:.5,yy=i<8?.73:1.0,tuft=oval(k,body,i%3?'#e0dbc4':'#d3cfb7',Math.sin(a)*.33*ring,yy+(i%2)*.1,-.08+Math.cos(a)*.47*ring,.19,.15,.20,10,7);tuft.rotation.y=a}for(const lx of [-.25,.25])for(const lz of [-.39,.29]){k.cyl(body,'#9b9277',lx,.25,lz,.061,.45);rounded(k,body,'#645e4e',lx,.066,lz,.14,.11,.15,.025)}const head=group(animal,0,.78,.48);oval(k,head,'#9d9c83',0,.02,.06,.21,.24,.25,18,12);oval(k,head,'#b9b49b',0,-.04,.24,.19,.13,.16,14,9);for(const s of [-1,1]){const ear=oval(k,head,'#b8b298',s*.23,.14,.01,.17,.06,.10,12,7);ear.rotation.z=s*.25;oval(k,head,'#343a32',s*.135,.13,.241,.033,.047,.018,10,7);oval(k,head,'#f0e8d3',s*.13,.145,.256,.008,.009,.006,6,4)}for(let i=0;i<5;i++)oval(k,head,'#e2ddc6',Math.sin(i*1.2)*.14,.27+(i%2)*.045,.13+Math.cos(i*1.2)*.07,.12,.10,.12,10,7);oval(k,body,'#dfd8c0',0,.73,-.68,.11,.11,.17,10,7);batchParts(body);batchParts(head);k.roundSolid(x,z,.56);k.animate((dt,time)=>{body.scale.y=1+Math.sin(time*2.4+seed)*.01;head.rotation.z=Math.sin(time*.71+seed)*.04;head.rotation.x=Math.sin(time*.49+seed)*.07});k.interact({x:Math.sign(x)*2.35,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'sheep',animalId},radius:1.65});return animal}
-export function chicken(k,x,z,seed,chick=false,animalId='pipoca'){const a=group(k.dynamic,x,0,z),body=group(a),scale=chick?.48:1;a.scale.setScalar(scale);oval(k,body,chick?'#d9bf78':'#c6ae84',0,.30,0,.23,.25,.29,14,10);oval(k,body,chick?'#e4cf8c':'#d5c4a0',0,.54,.15,.15,.18,.16,14,10);const beak=new T.Mesh(new T.ConeGeometry(.052,.14,5),new T.MeshStandardMaterial({color:'#c6a15e',roughness:.9}));beak.material.userData.regionOwned=true;beak.rotation.x=Math.PI/2;beak.position.set(0,.54,.33);body.add(beak);for(const s of [-1,1]){oval(k,body,'#34392e',s*.095,.59,.258,.018,.025,.013,8,6);const wing=oval(k,body,chick?'#c7ab65':'#ae946b',s*.19,.33,-.025,.06,.15,.20,12,8);wing.rotation.z=s*.2;k.beam(body,'#b28a4c',[s*.08,.11,.02],[s*.08,.01,.05],.018,'plain');k.beam(body,'#b28a4c',[s*.08,.015,.04],[s*.08,.015,.16],.014,'plain')}if(!chick){for(let i=0;i<3;i++)oval(k,body,'#a66d55',0,.72+i*.02,.15+(i-1)*.065,.035,.06,.047,8,6);oval(k,body,'#b27960',0,.43,.28,.027,.06,.025,8,6);const tail=oval(k,body,'#9c8661',0,.38,-.27,.15,.2,.12,12,8);tail.rotation.x=-.5}batchParts(body);k.animate((dt,time)=>{const phase=time*.55+seed;a.position.set(x+Math.sin(phase)*.18,Math.abs(Math.sin(time*4+seed))*.008*scale,z+Math.cos(phase*.8)*.13);a.rotation.y=Math.sin(phase*.7)*.55+seed;a.rotation.z=Math.sin(time*3.5+seed)*.025;body.rotation.x=Math.sin(time*2.6+seed)*.035});if(!chick){const name=ANIMALS.find(a=>a.id===animalId)?.name||'Galinha';k.interact({x,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'chicken',animalId},radius:1.3})}return a}
-function rail(k,x,z,d){for(const zz of [-d/2,0,d/2]){k.box(k.fixed,palette.dark,x,.62,z+zz,.14,1.24,.14,'wood');rounded(k,k.fixed,palette.trim,x,1.27,z+zz,.17,.11,.17,.025,'wood')}for(const y of [.42,.86])k.box(k.fixed,palette.oak,x,y,z,.10,.13,d,'wood');k.solid(x,z,.17,d+.15)}
-function hayBale(k,x,z,w=1,d=.75,h=.65){const existing=k.colliders.find(c=>c.w===w&&c.d===d&&c.x===x&&c.z===z);if(existing)existing.height=Math.max(existing.height||0,h);else k.solid(x,z,w,d,{height:h});rounded(k,k.fixed,'#b8a271',x,h/2,z,w,h,d,.08,'earth');for(const dx of [-w*.30,w*.30]){k.box(k.fixed,'#8d8257',x+dx,h+.008,z,.035,.018,d);k.box(k.fixed,'#8d8257',x+dx,h/2,z+d/2+.008,.035,h,.014)}for(let i=0;i<9;i++)k.beam(k.fixed,i%2?'#c9b67f':'#9f905b',[x-w*.43+i*w*.10,h+.018,z-d*.40],[x-w*.37+i*w*.10,h+.021,z+d*.39],.006,'plain')}
-function trough(k,x,z,angle=0,water=false,length=1.50){const p=group(k.fixed,x,0,z,angle);rounded(k,p,palette.dark,0,.24,0,.50,.45,length,.035,'wood');k.box(p,water?'#73968b':'#514633',0,.477,0,.36,.015,length-.17);for(const xx of [-.235,.235])k.box(p,palette.trim,xx,.50,0,.08,.20,length+.06,'wood');for(const zz of [-length/2,length/2])k.box(p,palette.trim,0,.50,zz,.50,.20,.08,'wood');k.solid(x,z,.65,length+.15,{angle,height:.62});return p}
-function barnShell(k){k.floor('#ad966d',14,11.2,0,0,0,'earth');k.box(k.fixed,'#65503b',0,-.27,0,14.25,.30,11.45,'wood');k.box(k.fixed,'#9c9b83',0,.43,-5.6,14.1,.86,.24,'stone');k.box(k.fixed,'#a79c80',-7,.43,0,.24,.86,11.2,'stone');k.box(k.fixed,'#8c7556',0,1.95,-5.62,14.1,2.2,.18,'wood');k.box(k.fixed,'#9a7d58',-7,1.95,0,.18,2.2,11.2,'wood');for(let i=0;i<29;i++)k.box(k.fixed,i%3?'#a38a63':'#b29971',-6.82+i*.486,1.95,-5.49,.447,2.17,.07,'wood');for(const x of [-6.8,-3.4,0,3.4,6.8]){k.box(k.fixed,palette.dark,x,1.6,-5.35,.23,3.2,.23,'wood');k.box(k.fixed,palette.trim,x,3.20,-5.35,.27,.10,.27,'wood')}for(const z of [-5.3,-1.8,1.8,5.3])k.box(k.fixed,palette.dark,-6.82,1.6,z,.23,3.2,.23,'wood');k.box(k.fixed,palette.dark,0,3.12,-5.35,13.9,.22,.27,'wood');k.box(k.fixed,palette.dark,-6.82,3.12,0,.27,.22,10.8,'wood');for(const x of [-3.8,3.8])k.beam(k.fixed,'#867052',[x-1.15,2.0,-5.24],[x+.95,3.0,-5.24],.07);k.path(0,.1,4.2,10.2,'#a28e6c');for(const s of [-1,1]){rounded(k,k.fixed,'#b9a476',s*4.7,.025,-.25,4.0,.035,9.6,.016,'earth');for(let i=0;i<140;i++){const x=s*4.65+Math.sin(i*127.1)*1.67,z=-4.65+((i*61.73)%9.2),a=i*2.399,len=.11+(i%5)*.025,straw=k.box(k.fixed,i%3?'#cab783':'#ad9a67',x,.055+(i%3)*.003,z,.008,.006,len);straw.rotation.y=a;straw.castShadow=false}}for(const x of [-6.5,6.5])k.box(k.fixed,palette.dark,x,.11,5.4,.7,.20,.2,'wood');k.solid(0,-5.55,14.2,.25);k.solid(-6.95,0,.25,11.3)}
-export function buildBarn(state={year:1,season:0,day:1,player:{x:0,z:4.4,angle:0}}){migrateAnimalCare(state);migrateTransport(state);const k=createInteriorKit(),p=k.fixed;barnShell(k);for(const x of[-2.55,2.55])for(const [z,length]of[[-4.85,.65],[-1.45,.60],[1.75,.6],[4.45,.55]])rail(k,x,z,length);for(const side of [-1,1])for(const z of [-4.75,-1.55,1.65]){const x=side*4.65;for(const xx of [-1.8,0,1.8])k.box(p,palette.dark,x+xx,.53,z,.12,1.06,.12,'wood');for(const y of [.36,.75])k.box(p,palette.oak,x,y,z,3.74,.12,.10,'wood');k.solid(x,z,3.85,.14)}const residents=[
+
+// Satin porcelain figurine helper (Reference 2)
+function porcelainMat(color,roughness=.34,metalness=.04){
+  const m=new T.MeshStandardMaterial({color,roughness,metalness});
+  m.userData.regionOwned=true;
+  return m;
+}
+function oval(k,p,color,x,y,z,sx,sy,sz,segments=16,rings=11){
+  const g=new T.SphereGeometry(1,segments,rings);
+  const o=new T.Mesh(g,typeof color==='string'?porcelainMat(color):color);
+  o.position.set(x,y,z);o.scale.set(sx,sy,sz);o.castShadow=o.receiveShadow=true;
+  p.add(o);return o;
+}
+
+// Chubby Porcelain Barn Cow matching Reference 2:
+// Rounded barrel body, glossy dark spots, big soft pink muzzle, leather collar + golden cowbell, stubby legs
+function paintedCow(k,p,seed){
+  const g=new T.SphereGeometry(1,26,18),a=g.attributes.position,c=new Float32Array(a.count*3);
+  const cream=new T.Color('#f7f3ea'),ink=new T.Color('#35302c'),v=new T.Vector3();
+  const patches=[[-.92,.28,.16,.66],[.90,.14,-.42,.62],[-.42,.74,-.52,.52],[.54,-.18,.60,.44],[.12,.56,-.88,.48]];
+  for(let i=0;i<a.count;i++){
+    v.fromBufferAttribute(a,i);
+    let mark=false;
+    for(let j=0;j<patches.length;j++){
+      const q=patches[(j+seed)%patches.length],dx=v.x-q[0],dy=v.y-q[1],dz=v.z-q[2],edge=q[3]+.025*Math.sin(v.z*12+v.y*10+j);
+      if(dx*dx+dy*dy+dz*dz<edge*edge){mark=true;break}
+    }
+    const shade=mark?ink:cream;
+    c.set([shade.r,shade.g,shade.b],i*3);
+  }
+  g.setAttribute('color',new T.BufferAttribute(c,3));
+  const mat=new T.MeshStandardMaterial({color:0xffffff,vertexColors:true,roughness:.34,metalness:.04});
+  mat.userData.regionOwned=true;
+  const body=new T.Mesh(g,mat);
+  body.position.set(0,.82,-.08);
+  body.scale.set(.54,.48,.74);
+  body.castShadow=body.receiveShadow=true;
+  p.add(body);
+}
+
+function cow(k,x,z,yaw,name,seed=0,animalId='mimosa'){
+  const animal=group(k.dynamic,x,0,z,yaw),torso=group(animal);
+  paintedCow(k,torso,seed);
+  // Stubby chubby porcelain legs & dark hooves
+  const legMat=porcelainMat('#f7f3ea',.34,.04),hoofMat=porcelainMat('#453d36',.38,.05);
+  for(const lx of [-.30,.30])for(const lz of [-.48,.34]){
+    const leg=new T.Mesh(new T.CylinderGeometry(.112,.102,.46,14),legMat);
+    leg.position.set(lx,.32,lz);leg.castShadow=leg.receiveShadow=true;torso.add(leg);
+    const hoof=new T.Mesh(new T.CylinderGeometry(.112,.118,.14,14),hoofMat);
+    hoof.position.set(lx,.07,lz+.01);hoof.castShadow=hoof.receiveShadow=true;torso.add(hoof);
+  }
+  // Brown leather collar & shiny golden cowbell (Reference 2)
+  const collar=new T.Mesh(new T.TorusGeometry(.32,.042,10,24),porcelainMat('#75472b',.55,.04));
+  collar.position.set(0,.84,.48);collar.rotation.x=Math.PI/2-.38;collar.castShadow=true;torso.add(collar);
+  const bell=new T.Mesh(new T.CylinderGeometry(.062,.085,.13,12),porcelainMat('#e8be4a',.25,.55));
+  bell.position.set(0,.58,.72);bell.castShadow=true;torso.add(bell);
+  oval(k,torso,porcelainMat('#b88924',.28,.5),0,.51,.72,.038,.038,.038,10,8);
+
+  // Cute round head + big soft pink muzzle + glossy eyes
+  const head=group(animal,0,.96,.62);
+  oval(k,head,'#f7f3ea',0,.12,.06,.34,.33,.33,20,14);
+  oval(k,head,'#f5bbb0',0,-.02,.32,.33,.21,.22,18,12);
+  for(const s of [-1,1]){
+    const ear=oval(k,head,'#f7f3ea',s*.36,.27,.02,.18,.085,.11,14,10);ear.rotation.z=s*.22;
+    const inner=oval(k,head,'#f2a89c',s*.36,.26,.065,.11,.045,.055,10,7);inner.rotation.z=s*.22;
+    // Glossy dark eyes + crisp white catchlight + rosy cheeks
+    oval(k,head,porcelainMat('#1c1917',.12,.08),s*.17,.22,.335,.046,.058,.028,12,10);
+    oval(k,head,porcelainMat('#ffffff',.1,0),s*.158,.244,.360,.015,.019,.010,8,6);
+    oval(k,head,'#f59f93',s*.24,.06,.28,.055,.034,.025,10,7);
+    oval(k,head,'#d4887c',s*.12,.01,.525,.034,.025,.016,10,7);
+    const horn=new T.Mesh(new T.ConeGeometry(.058,.16,10),porcelainMat('#efe2c4',.38,.04));
+    horn.position.set(s*.19,.43,-.01);horn.rotation.z=-s*.22;horn.castShadow=true;head.add(horn);
+  }
+  const tail=group(animal,0,.88,-.78);
+  k.beam(tail,'#f7f3ea',[0,0,0],[.02,-.38,-.06],.028,'plain');
+  oval(k,tail,'#35302c',.02,-.40,-.06,.065,.10,.065,12,8);
+
+  batchParts(torso);batchParts(head);batchParts(tail);
+  k.roundSolid(x,z,.72);
+  k.animate((dt,time)=>{torso.scale.y=1+Math.sin(time*2.1+seed)*.009;head.rotation.x=Math.sin(time*.82+seed)*.045;head.rotation.y=Math.sin(time*.39+seed)*.055;tail.rotation.z=Math.sin(time*1.6+seed)*.17;animal.position.z=z+Math.sin(time*.31+seed)*.025});
+  k.interact({x:Math.sign(x)*2.35,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'cow',animalId},radius:1.65});
+  return animal;
+}
+
+function sheep(k,x,z,yaw,name,seed,animalId='nuvem'){const animal=group(k.dynamic,x,0,z,yaw),body=group(animal);oval(k,body,'#f5efe2',0,.70,-.08,.44,.40,.60,20,13);for(let i=0;i<14;i++){const a=i*2.4,ring=i<8?.82:.52,yy=i<8?.74:1.0,tuft=oval(k,body,i%3?'#faf6ea':'#e8e0cc',Math.sin(a)*.34*ring,yy+(i%2)*.1,-.08+Math.cos(a)*.48*ring,.20,.16,.21,10,7);tuft.rotation.y=a}for(const lx of [-.25,.25])for(const lz of [-.39,.29]){k.cyl(body,'#d4b89e',lx,.25,lz,.065,.45);rounded(k,body,'#594a3e',lx,.066,lz,.14,.11,.15,.025)}const head=group(animal,0,.78,.48);oval(k,head,'#f2d5bc',0,.02,.06,.22,.24,.25,18,12);oval(k,head,'#eabca4',0,-.04,.24,.19,.13,.16,14,9);for(const s of [-1,1]){const ear=oval(k,head,'#e8cbb0',s*.24,.14,.01,.16,.06,.10,12,7);ear.rotation.z=s*.25;oval(k,head,porcelainMat('#1f1d1a',.15,0),s*.135,.13,.241,.035,.048,.018,10,7);oval(k,head,porcelainMat('#ffffff',.1,0),s*.128,.146,.258,.010,.012,.007,6,4)}for(let i=0;i<5;i++)oval(k,head,'#faf5e8',Math.sin(i*1.2)*.14,.27+(i%2)*.045,.13+Math.cos(i*1.2)*.07,.12,.10,.12,10,7);oval(k,body,'#faf5e8',0,.73,-.68,.11,.11,.17,10,7);batchParts(body);batchParts(head);k.roundSolid(x,z,.56);k.animate((dt,time)=>{body.scale.y=1+Math.sin(time*2.4+seed)*.01;head.rotation.z=Math.sin(time*.71+seed)*.04;head.rotation.x=Math.sin(time*.49+seed)*.07});k.interact({x:Math.sign(x)*2.35,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'sheep',animalId},radius:1.65});return animal}
+
+export function chicken(k,x,z,seed,chick=false,animalId='pipoca'){const a=group(k.dynamic,x,0,z),body=group(a),scale=chick?.48:1;a.scale.setScalar(scale);oval(k,body,chick?'#f2d16b':'#f7f1e3',0,.30,0,.24,.25,.29,14,10);oval(k,body,chick?'#fae084':'#fcf8ee',0,.54,.15,.16,.18,.16,14,10);const beak=new T.Mesh(new T.ConeGeometry(.052,.14,6),porcelainMat('#e89e3c',.35,0));beak.rotation.x=Math.PI/2;beak.position.set(0,.54,.33);body.add(beak);for(const s of [-1,1]){oval(k,body,porcelainMat('#1e1c1a',.15,0),s*.095,.59,.258,.022,.028,.014,8,6);const wing=oval(k,body,chick?'#e0be5a':'#e8dec7',s*.19,.33,-.025,.065,.15,.20,12,8);wing.rotation.z=s*.2;k.beam(body,'#e39a3b',[s*.08,.11,.02],[s*.08,.01,.05],.018,'plain');k.beam(body,'#e39a3b',[s*.08,.015,.04],[s*.08,.015,.16],.014,'plain')}if(!chick){for(let i=0;i<3;i++)oval(k,body,'#d94a3d',0,.72+i*.02,.15+(i-1)*.065,.036,.06,.048,8,6);oval(k,body,'#d94a3d',0,.43,.28,.028,.06,.026,8,6);const tail=oval(k,body,'#ede3cd',0,.38,-.27,.15,.2,.12,12,8);tail.rotation.x=-.5}batchParts(body);k.animate((dt,time)=>{const phase=time*.55+seed;a.position.set(x+Math.sin(phase)*.18,Math.abs(Math.sin(time*4+seed))*.008*scale,z+Math.cos(phase*.8)*.13);a.rotation.y=Math.sin(phase*.7)*.55+seed;a.rotation.z=Math.sin(time*3.5+seed)*.025;body.rotation.x=Math.sin(time*2.6+seed)*.035});if(!chick){const name=ANIMALS.find(a=>a.id===animalId)?.name||'Galinha';k.interact({x,z,label:'Acariciar '+name,type:'pet',data:{name,animal:'chicken',animalId},radius:1.3})}return a}
+
+function rail(k,x,z,d){for(const zz of [-d/2,0,d/2]){k.box(k.fixed,palette.dark,x,.62,z+zz,.15,1.24,.15,'wood');rounded(k,k.fixed,palette.trim,x,1.27,z+zz,.18,.11,.18,.025,'wood')}for(const y of [.42,.86])k.box(k.fixed,palette.oak,x,y,z,.11,.14,d,'wood');k.solid(x,z,.17,d+.15)}
+function hayBale(k,x,z,w=1,d=.75,h=.65){const existing=k.colliders.find(c=>c.w===w&&c.d===d&&c.x===x&&c.z===z);if(existing)existing.height=Math.max(existing.height||0,h);else k.solid(x,z,w,d,{height:h});rounded(k,k.fixed,'#d9bc6c',x,h/2,z,w,h,d,.08,'wood');for(const dx of [-w*.30,w*.30]){k.box(k.fixed,'#8c723b',x+dx,h+.008,z,.035,.018,d);k.box(k.fixed,'#8c723b',x+dx,h/2,z+d/2+.008,.035,h,.014)}for(let i=0;i<12;i++)k.beam(k.fixed,i%2?'#ebd282':'#bfa052',[x-w*.43+i*w*.08,h+.018,z-d*.40],[x-w*.37+i*w*.08,h+.021,z+d*.39],.007,'plain')}
+function trough(k,x,z,angle=0,water=false,length=1.50){const p=group(k.fixed,x,0,z,angle);rounded(k,p,palette.dark,0,.24,0,.52,.45,length,.035,'wood');k.box(p,water?'#73968b':'#8c7442',0,.477,0,.38,.015,length-.17);for(const xx of [-.24,.24])k.box(p,palette.trim,xx,.50,0,.09,.22,length+.06,'wood');for(const zz of [-length/2,length/2])k.box(p,palette.trim,0,.50,zz,.52,.22,.09,'wood');k.solid(x,z,.65,length+.15,{angle,height:.62});return p}
+
+// Procedural Dense Golden Straw Floor Texture (Reference 2)
+function goldenStrawMaterial(repeatX=4,repeatY=4,dense=true){
+  const c=document.createElement('canvas');c.width=c.height=512;const q=c.getContext('2d');
+  q.fillStyle=dense?'#9c7b42':'#8a6d45';q.fillRect(0,0,512,512);
+  let seed=dense?2026:9091;
+  const rnd=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
+  // Soft earthy variation underneath
+  for(let i=0;i<180;i++){
+    const x=rnd()*512,y=rnd()*512,r=18+rnd()*42;
+    q.fillStyle=i%2?'rgba(74,52,26,0.16)':'rgba(218,184,104,0.14)';
+    q.beginPath();q.arc(x,y,r,0,Math.PI*2);q.fill();
+  }
+  // Thousands of crisp overlapping golden straw blades
+  const count=dense?4200:950;
+  const tones=['#f0d684','#dfc068','#c9a44b','#f7e39c','#b38c39','#e6cb77'];
+  for(let i=0;i<count;i++){
+    const x=rnd()*512,y=rnd()*512,len=(dense?16:12)+rnd()*22,ang=rnd()*Math.PI*2;
+    q.strokeStyle=tones[i%tones.length];
+    q.lineWidth=1.1+rnd()*1.4;
+    q.beginPath();
+    q.moveTo(x,y);
+    q.lineTo(x+Math.cos(ang)*len,y+Math.sin(ang)*len);
+    q.stroke();
+  }
+  const tex=new T.CanvasTexture(c);
+  tex.colorSpace=T.SRGBColorSpace;
+  tex.wrapS=tex.wrapT=T.RepeatWrapping;
+  tex.repeat.set(repeatX,repeatY);
+  tex.anisotropy=8;
+  const mat=new T.MeshStandardMaterial({map:tex,bumpMap:tex,bumpScale:dense?.065:.03,roughness:.92});
+  mat.userData.regionOwned=true;
+  return mat;
+}
+
+function barnShell(k){
+  // Warm packed barn floor with scattered golden straw wisps
+  const aisleMat=goldenStrawMaterial(4,4,false);
+  const floorMesh=new T.Mesh(new T.BoxGeometry(14,.24,11.2),aisleMat);
+  floorMesh.position.set(0,-.12,0);floorMesh.receiveShadow=true;k.fixed.add(floorMesh);
+
+  // Thick carved wooden diorama plinth frame around the barn (Reference 2)
+  k.box(k.fixed,'#52351d',0,-.34,0,14.9,.54,12.1,'wood');
+  k.box(k.fixed,'#785230',0,-.08,0,14.55,.14,11.75,'wood');
+
+  // Stone lower walls + rustic timber upper walls
+  k.box(k.fixed,'#9c9b83',0,.48,-5.6,14.1,.96,.24,'stone');
+  k.box(k.fixed,'#a79c80',-7,.48,0,.24,.96,11.2,'stone');
+  k.box(k.fixed,'#8c704c',0,2.0,-5.62,14.1,2.2,.18,'wood');
+  k.box(k.fixed,'#967750',-7,2.0,0,.18,2.2,11.2,'wood');
+  for(let i=0;i<29;i++)k.box(k.fixed,i%3?'#9c7f56':'#ab8d62',-6.82+i*.486,2.0,-5.49,.447,2.17,.07,'wood');
+  for(const x of [-6.8,-3.4,0,3.4,6.8]){k.box(k.fixed,palette.dark,x,1.6,-5.35,.25,3.2,.25,'wood');k.box(k.fixed,palette.trim,x,3.20,-5.35,.29,.10,.29,'wood')}
+  for(const z of [-5.3,-1.8,1.8,5.3])k.box(k.fixed,palette.dark,-6.82,1.6,z,.25,3.2,.25,'wood');
+  k.box(k.fixed,palette.dark,0,3.12,-5.35,13.9,.24,.28,'wood');
+  k.box(k.fixed,palette.dark,-6.82,3.12,0,.28,.24,10.8,'wood');
+  for(const x of [-3.8,3.8])k.beam(k.fixed,'#7a5d3e',[x-1.15,2.0,-5.24],[x+.95,3.0,-5.24],.075);
+
+  // Lush golden straw bedding in both animal stall wings (Reference 2)
+  const denseStrawMat=goldenStrawMaterial(3,6,true);
+  for(const s of [-1,1]){
+    const bed=new T.Mesh(new T.BoxGeometry(4.4,.045,9.8),denseStrawMat);
+    bed.position.set(s*4.7,.022,-.25);bed.receiveShadow=true;k.fixed.add(bed);
+    // 3D golden straw wisps sticking up for tactile miniature depth
+    for(let i=0;i<240;i++){
+      const x=s*4.65+Math.sin(i*127.1)*1.95,z=-4.85+((i*61.73)%9.5),a=i*2.399,len=.14+(i%5)*.035;
+      const straw=k.box(k.fixed,i%3===0?'#f0d884':i%3===1?'#d9ba62':'#c49f47',x,.058+(i%3)*.005,z,.012,.009,len);
+      straw.rotation.y=a;straw.rotation.x=(i%2?.12:-.08);straw.castShadow=false;
+    }
+  }
+  for(const x of [-6.5,6.5])k.box(k.fixed,palette.dark,x,.11,5.4,.7,.20,.2,'wood');
+  k.solid(0,-5.55,14.2,.25);k.solid(-6.95,0,.25,11.3);
+}
+
+export function buildBarn(state={year:1,season:0,day:1,player:{x:0,z:4.4,angle:0}}){migrateAnimalCare(state);migrateTransport(state);const k=createInteriorKit(),p=k.fixed;barnShell(k);for(const x of[-2.55,2.55])for(const [z,length]of[[-4.85,.65],[-1.45,.60],[1.75,.6],[4.45,.55]])rail(k,x,z,length);for(const side of [-1,1])for(const z of [-4.75,-1.55,1.65]){const x=side*4.65;for(const xx of [-1.8,0,1.8])k.box(p,palette.dark,x+xx,.53,z,.13,1.06,.13,'wood');for(const y of [.36,.75])k.box(p,palette.oak,x,y,z,3.74,.13,.11,'wood');k.solid(x,z,3.85,.14)}const residents=[
  {id:'mimosa',object:cow(k,-4.85,-3.08,Math.PI/2,'Mimosa',0,'mimosa'),height:1.96},
  {id:'estrela',object:cow(k,-4.85,.07,Math.PI/2,'Estrela',1,'estrela'),height:1.96},
  {id:'amora',object:cow(k,4.9,-3.1,-Math.PI/2,'Amora',2,'amora'),height:1.96},
@@ -54,11 +210,18 @@ const feedStations=[
 ].filter(([id])=>propertyKey(state,'barn')!=='farm'||ANIMALS.find(a=>a.id===id).species!=='chicken');const assigned=new Set(transportRoster(state,'barn').map(a=>a.id)),haySlots=[];for(const [id,x,z,ix,iz,length] of feedStations){trough(k,x,z,0,false,length);const filled=hayPortion(k,k.dynamic,x,.51,z,.32,.16,length-.18);filled.visible=assigned.has(id)&&animalStatus(state,id).fed;haySlots.push({id,filled});const a=ANIMALS.find(a=>a.id===id);if(assigned.has(id))k.interact({x:ix,z:iz,label:a.feedLabel+' · colocar feno',type:'feed',data:{name:a.feedLabel,animalId:id},radius:1.05});const plaque=k.box(p,'#d2bd8f',x,.60,z+length/2+.045,.40,.12,.025);plaque.castShadow=false}
 barnCareDisplay(k,state,residents,haySlots);k.sign(1.7,4.5,'Celeiro');
 for(const x of [-5.75,-4.6]){hayBale(k,x,-4.75,1.03,.62,.62);hayBale(k,x,-4.75,1.03,.62,1.16)}hayBale(k,5.8,-4.82,1.4,.64,.75);hayBale(k,4.5,-4.82,1.1,.64,.65);hayBale(k,-1.3,-4.4,1.25,.72,.78);for(const xx of [-1.98,-.62])k.box(p,palette.dark,xx,.66,-4.4,.08,1.32,.85,'wood');k.box(p,palette.oak,-1.3,1.25,-4.82,1.44,.12,.08,'wood');k.solid(-1.3,-4.45,1.5,.9);k.interact({x:-1.15,z:-3.4,label:'Pegar ou devolver uma porção de feno',type:'hayRack',data:{name:'Depósito de feno'},radius:1.25});const barrel=group(p,1.3,0,-4.6);k.cyl(barrel,'#9c835b',0,.53,0,.43,1.06,'wood');for(const y of [.12,.52,.94])k.cyl(barrel,'#6b715e',0,y,0,.448,.055);k.cyl(barrel,'#574c39',0,1.07,0,.35,.018);k.cyl(barrel,'#8d9a86',0,1.08,0,.30,.02);k.roundSolid(1.3,-4.6,.5);k.beam(p,palette.dark,[-6.46,.05,-4.7],[-6.18,2.07,-4.7],.024);k.beam(p,'#898e7a',[-6.18,2.07,-4.7],[-6.15,2.4,-4.7],.025,'plain');for(let i=0;i<4;i++)k.beam(p,'#898e7a',[-6.32+i*.1,2.03,-4.7],[-6.32+i*.1,2.40,-4.7],.014,'plain');
-if(propertyKey(state,'barn')!=='farm'){const eggCount=availableEggs(state,propertyKey(state,'barn')).length;let eggIndex=0;const nest=group(p,5.85,0,3.77);k.box(nest,palette.dark,0,.65,-.41,1.64,1.25,.10,'wood');for(const xx of [-.8,0,.8])k.box(nest,palette.oak,xx,.65,0,.08,1.25,.87,'wood');for(const yy of [.12,.72,1.31])k.box(nest,palette.oak,0,yy,0,1.7,.09,.95,'wood');for(let row=0;row<2;row++)for(const xx of [-.4,.4]){rounded(k,nest,'#bba778',xx,.20+row*.6,.04,.64,.12,.68,.045,'earth');for(let j=0;j<(row===0?(xx<0?2:1):0);j++)if(eggIndex++<eggCount)oval(k,nest,'#e9ddbb',xx+(j-1)*.15,.31+row*.6,.15+(j%2)*.13,.073,.105,.073,12,8)}k.solid(5.85,3.77,1.8,1.03);k.interact({x:4.69,z:3.70,label:'Recolher os ovos do ninho',type:'eggs',data:{name:'Ninhos'},radius:1.5});}bowl(k,p,-5.85,.12,2.3,.35,'#8c998a');k.roundSolid(-5.85,2.3,.35,{height:.20});k.cyl(p,'#73988f',-5.85,.19,2.3,.27,.016);basket(k,p,3.6,.25,4.6,.85,.68);k.solid(3.6,4.6,.9,.72);for(const x of [-3.25,3.25]){k.box(p,palette.dark,x,2.42,-5.03,.11,.50,.12);glow(k,p,'#d6bd80',x,2.30,-4.92,.18,.28,.18,.65);k.box(p,palette.dark,x,2.49,-4.92,.24,.08,.24);k.box(p,palette.dark,x,2.12,-4.92,.24,.07,.24)}k.portal({x:0,z:5.12,to:'farm',spawn:[-7.5,-6.7],label:'Sair do celeiro',radius:.95});return k.finish({id:'barn',label:'Celeiro dos animais',bounds:[-6.7,6.7,-5.25,5.45],spawn:[0,4.4],indoors:true,viewHeight:12.5,residentIds:residents.map(a=>a.id),photoSubjects:residents.map(a=>{const resident=ANIMALS.find(b=>b.id===a.id);return {id:'barn-'+a.id,speciesId:resident.species,name:resident.name,area:'barn',object:a.object,offsetY:a.height*.48}})})}
+if(propertyKey(state,'barn')!=='farm'){const eggCount=availableEggs(state,propertyKey(state,'barn')).length;let eggIndex=0;const nest=group(p,5.85,0,3.77);k.box(nest,palette.dark,0,.65,-.41,1.64,1.25,.10,'wood');for(const xx of [-.8,0,.8])k.box(nest,palette.oak,xx,.65,0,.08,1.25,.87,'wood');for(const yy of [.12,.72,1.31])k.box(nest,palette.oak,0,yy,0,1.7,.09,.95,'wood');for(let row=0;row<2;row++)for(const xx of [-.4,.4]){rounded(k,nest,'#d4b86a',xx,.20+row*.6,.04,.64,.12,.68,.045,'wood');for(let j=0;j<(row===0?(xx<0?2:1):0);j++)if(eggIndex++<eggCount)oval(k,nest,'#f5ebd2',xx+(j-1)*.15,.31+row*.6,.15+(j%2)*.13,.073,.105,.073,12,8)}k.solid(5.85,3.77,1.8,1.03);k.interact({x:4.69,z:3.70,label:'Recolher os ovos do ninho',type:'eggs',data:{name:'Ninhos'},radius:1.5});}bowl(k,p,-5.85,.12,2.3,.35,'#8c998a');k.roundSolid(-5.85,2.3,.35,{height:.20});k.cyl(p,'#73988f',-5.85,.19,2.3,.27,.016);basket(k,p,3.6,.25,4.6,.85,.68);k.solid(3.6,4.6,.9,.72);
+// Warm glowing wall lanterns with real PointLights (Reference 2)
+for(const x of [-3.25,3.25]){
+  k.box(p,palette.dark,x,2.42,-5.03,.11,.50,.12);
+  glow(k,p,'#ffdc82',x,2.30,-4.92,.18,.28,.18,1.15);
+  k.box(p,palette.dark,x,2.49,-4.92,.24,.08,.24);
+  k.box(p,palette.dark,x,2.12,-4.92,.24,.07,.24);
+  const pl=new T.PointLight('#ffaa3b',2.6,10,1.7);pl.position.set(x,2.25,-4.6);k.dynamic.add(pl);
+}
+k.portal({x:0,z:5.12,to:'farm',spawn:[-7.5,-6.7],label:'Sair do celeiro',radius:.95});return k.finish({id:'barn',label:'Celeiro dos animais',bounds:[-6.7,6.7,-5.25,5.45],spawn:[0,4.4],indoors:true,viewHeight:12.5,residentIds:residents.map(a=>a.id),photoSubjects:residents.map(a=>{const resident=ANIMALS.find(b=>b.id===a.id);return {id:'barn-'+a.id,speciesId:resident.species,name:resident.name,area:'barn',object:a.object,offsetY:a.height*.48}})})}
 
-// The eight status cards share one atlas and one draw call. The atlas is repainted
-// only after care changes; animation updates just the tiny billboard vertex buffer.
-function hayPortion(k,parent,x,y,z,w=.42,h=.22,d=.36){const p=group(parent,x,y,z);rounded(k,p,'#c7b37d',0,0,0,w,h,d,.025);for(let i=0;i<11;i++){const zz=-d*.4+(i%5)*d*.19,xx=Math.sin(i*7.3)*w*.30,straw=k.box(p,'#c7b37d',xx,h*.52,zz,w*(.40+(i%3)*.13),.012,.016);straw.rotation.y=i*2.399}batchParts(p);p.traverse(o=>{if(o.isMesh)o.castShadow=false});return p}
+function hayPortion(k,parent,x,y,z,w=.42,h=.22,d=.36){const p=group(parent,x,y,z);rounded(k,p,'#dec26f',0,0,0,w,h,d,.025);for(let i=0;i<11;i++){const zz=-d*.4+(i%5)*d*.19,xx=Math.sin(i*7.3)*w*.30,straw=k.box(p,'#f0d884',xx,h*.52,zz,w*(.40+(i%3)*.13),.012,.016);straw.rotation.y=i*2.399}batchParts(p);p.traverse(o=>{if(o.isMesh)o.castShadow=false});return p}
 export function barnCareDisplay(k,state,residents,haySlots){
  const canvas=document.createElement('canvas');canvas.width=512;canvas.height=128*Math.max(1,residents.length);const ctx=canvas.getContext('2d'),map=new T.CanvasTexture(canvas);map.colorSpace=T.SRGBColorSpace;map.generateMipmaps=false;map.minFilter=T.LinearFilter;map.magFilter=T.LinearFilter;
  const material=new T.MeshBasicMaterial({map,transparent:true,depthWrite:false,alphaTest:.05,side:T.DoubleSide,toneMapped:false});material.userData.regionOwned=true;
