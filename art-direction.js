@@ -9,7 +9,8 @@ function configureRetroTex(tex, repeat=1){
   tex.wrapS=tex.wrapT=T.RepeatWrapping;
   tex.repeat.set(repeat,repeat);
   tex.magFilter=T.NearestFilter;
-  tex.minFilter=T.NearestMipmapLinearFilter;
+  tex.minFilter=T.NearestFilter;
+  tex.generateMipmaps=false;
   tex.anisotropy=1;
   return tex;
 }

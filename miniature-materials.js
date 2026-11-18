@@ -1,34 +1,34 @@
 import * as T from './three.module.js';
 const sources=new Map(),maps=new Map();
 
-// PS1/Indie Retro Palette & Nearest-Neighbor Crisp Filtering
 function configurePS1Texture(tex, repeat=1){
   tex.colorSpace=T.SRGBColorSpace;
   tex.wrapS=tex.wrapT=T.RepeatWrapping;
   tex.repeat.set(repeat,repeat);
   tex.magFilter=T.NearestFilter;
-  tex.minFilter=T.NearestMipmapLinearFilter;
-  tex.generateMipmaps=true;
+  tex.minFilter=T.NearestFilter;
+  tex.generateMipmaps=false;
   tex.anisotropy=1;
   tex.needsUpdate=true;
   return tex;
 }
 
-// Ordered Bayer 4x4 Dithering + Color Quantization on Canvas
-function ditherCanvas(ctx, w, h, levels=14){
-  const bayer=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
-  const img=ctx.getImageData(0,0,w,h), d=img.data;
-  for(let y=0;y<h;y++){
-    for(let x=0;x<w;x++){
-      const i=(y*w+x)*4;
-      const threshold=(bayer[y&3][x&3]/16 - 0.5) * (255/levels);
-      for(let c=0;c<3;c++){
-        const v=Math.max(0,Math.min(255,d[i+c]+threshold));
-        d[i+c]=Math.round((v/255)*levels)*(255/levels);
+function ditherCanvas(ctx, w, h, levels=15){
+  try{
+    const bayer=[[0,8,2,10],[12,4,14,6],[3,11,1,9],[15,7,13,5]];
+    const img=ctx.getImageData(0,0,w,h), d=img.data;
+    for(let y=0;y<h;y++){
+      for(let x=0;x<w;x++){
+        const i=(y*w+x)*4;
+        const threshold=(bayer[y&3][x&3]/16 - 0.5) * (255/levels);
+        for(let c=0;c<3;c++){
+          const v=Math.max(0,Math.min(255,d[i+c]+threshold));
+          d[i+c]=Math.round((v/255)*levels)*(255/levels);
+        }
       }
     }
-  }
-  ctx.putImageData(img,0,0);
+    ctx.putImageData(img,0,0);
+  }catch(_e){}
 }
 
 export async function loadMiniatureMaterials(){
@@ -38,7 +38,6 @@ export async function loadMiniatureMaterials(){
     img.src=new URL(url,import.meta.url);
     await img.decode();
     names.forEach((name,i)=>{
-      // Low-res crisp 128x128 texels per quadrant for authentic PS1/indie hand-painted texel density
       const canvas=document.createElement('canvas');
       canvas.width=canvas.height=128;
       const q=canvas.getContext('2d');
@@ -76,7 +75,7 @@ export function contactTexture(){
   q.fillStyle=g;q.fillRect(0,0,32,32);
   ditherCanvas(q,32,32,8);
   const tex=new T.CanvasTexture(c);
-  tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;
+  tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;tex.generateMipmaps=false;
   return tex;
 }
 
@@ -88,31 +87,28 @@ export function soilEdgeTexture(){
   }
   q.putImageData(im,0,0);
   const tex=new T.CanvasTexture(c);
-  tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;
+  tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;tex.generateMipmaps=false;
   return tex;
 }
 
-// PS1 / Indie Retro Post-Processing Lens:
-// - Crisp PS1 internal resolution scaling (gentle pixelation with crisp edges)
-// - Ordered 4x4 Bayer dithering + 15-bit RGB555 color depth simulation
-// - Stylized Warm Rim & Contact AO without blurry tilt-shift smear
+// PS1 / Indie Retro Post-Processing Lens (WebGL1 & WebGL2 safe)
 export function miniatureLens(renderer){
   renderer.info.autoReset=false;
   const drawingSize=new T.Vector2();
+  const depthTex=new T.DepthTexture(1,1);
+  depthTex.minFilter=T.NearestFilter;
+  depthTex.magFilter=T.NearestFilter;
   const target=new T.WebGLRenderTarget(1,1,{
     type:T.HalfFloatType,
-    samples:0,
     minFilter:T.NearestFilter,
     magFilter:T.NearestFilter,
-    depthTexture:new T.DepthTexture(1,1)
+    depthTexture:depthTex
   });
   const uniforms={
     sceneMap:{value:target.texture},
     depthMap:{value:target.depthTexture},
-    pixel:{value:new T.Vector2(1,1)},
-    texelSize:{value:new T.Vector2(1,1)},
-    depthRange:{value:99.9},
-    time:{value:0}
+    texelSize:{value:new T.Vector2(1/640,1/360)},
+    depthRange:{value:99.9}
   };
   const material=new T.ShaderMaterial({
     uniforms,depthTest:false,depthWrite:false,
@@ -120,10 +116,10 @@ export function miniatureLens(renderer){
     fragmentShader:`
       varying vec2 vUv;
       uniform sampler2D sceneMap,depthMap;
-      uniform vec2 pixel,texelSize;
+      uniform vec2 texelSize;
       uniform float depthRange;
 
-      float depthAt(vec2 uv){return texture2D(depthMap,uv).r*depthRange;}
+      float depthAt(vec2 uv){return texture2D(depthMap,clamp(uv,vec2(0.001),vec2(0.999))).r*depthRange;}
 
       float bayer4x4(vec2 pos){
         int x=int(mod(pos.x,4.0));
@@ -137,33 +133,32 @@ export function miniatureLens(renderer){
       }
 
       void main(){
-        // Subtle PS1 pixel-grid snap (2.2x retro texel scale, keeps UI & text 100% sharp)
         vec2 grid=floor(vUv/texelSize)*texelSize+texelSize*0.5;
         float z=depthAt(grid);
-        vec2 slope=vec2(dFdx(z),dFdy(z));
+        float zL=depthAt(grid-vec2(texelSize.x,0.0));
+        float zR=depthAt(grid+vec2(texelSize.x,0.0));
+        float zD=depthAt(grid-vec2(0.0,texelSize.y));
+        float zU=depthAt(grid+vec2(0.0,texelSize.y));
+        vec2 slope=vec2(zR-zL,zU-zD)*0.5;
 
-        // Crisp stylized contact AO + dark silhouette edge ink
         float ao=0.0;
         float edge=0.0;
         for(int i=0;i<4;i++){
           float a=float(i)*1.5707963;
-          vec2 offset=vec2(cos(a),sin(a))*texelSize*1.5;
-          float dz=depthAt(grid+offset);
-          float delta=z+dot(slope,offset)-dz;
+          vec2 dir=vec2(cos(a),sin(a));
+          float dz=depthAt(grid+dir*texelSize*1.5);
+          float delta=z+dot(slope,dir*1.5)-dz;
           ao+=smoothstep(0.03,0.14,delta)*(1.0-smoothstep(0.18,0.75,delta));
           edge=max(edge,smoothstep(0.45,1.25,abs(dz-z)));
         }
 
         vec3 color=texture2D(sceneMap,grid).rgb;
-        // Warm indie color grading + crisp silhouette outline
         color*=1.0-ao*0.14;
         color=mix(color,color*vec3(0.42,0.36,0.34),edge*0.42);
 
-        // Soft warm vignette
         float vignette=1.0-0.12*smoothstep(0.38,0.82,length((vUv-0.5)*vec2(0.88,1.0)));
         color*=vignette;
 
-        // PS1 15-bit RGB555 (32 levels per channel) + Ordered Bayer Dithering
         vec2 screenPos=floor(vUv/texelSize);
         float dither=(bayer4x4(screenPos)-0.5)*(1.0/30.0);
         color=clamp(color+dither,0.0,1.0);
@@ -179,14 +174,12 @@ export function miniatureLens(renderer){
     render(world,view){
       renderer.info.reset();
       const size=renderer.getDrawingBufferSize(drawingSize);
-      // Render at retro PS1-inspired internal resolution (height ~360p-420p) for authentic crunchy pixels & high FPS
       const scale=Math.max(1,Math.round(size.y/380));
       const rw=Math.max(320,Math.floor(size.x/scale));
       const rh=Math.max(200,Math.floor(size.y/scale));
       if(width!==rw||height!==rh){
         width=rw;height=rh;
         target.setSize(width,height);
-        uniforms.pixel.value.set(1/width,1/height);
         uniforms.texelSize.value.set(1/width,1/height);
       }
       uniforms.depthRange.value=view.far-view.near;
