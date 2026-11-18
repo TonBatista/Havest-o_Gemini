@@ -10,14 +10,14 @@ function roundedBox(w,h,d,r){
 }
 
 // Sculpted PS1-indie polygon density (14x10 spheres for charming faceted silhouette)
-const sphere=new T.SphereGeometry(1,14,10),smallSphere=new T.SphereGeometry(1,6,4);
+const sphere=new T.SphereGeometry(1,22,16),smallSphere=new T.SphereGeometry(1,8,6);
 let clothGrain;
 function fineCloth(){
   if(clothGrain)return clothGrain;
-  const c=document.createElement('canvas');c.width=c.height=64;const q=c.getContext('2d');q.imageSmoothingEnabled=false;q.fillStyle='#fcfaf5';q.fillRect(0,0,64,64);
+  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#fcfaf5';q.fillRect(0,0,64,64);
   for(let i=0;i<64;i+=2){q.fillStyle=i%4?'#b5ad8f1c':'#ffffff28';q.fillRect(i,0,1,64);q.fillRect(0,i,64,1)}
   clothGrain=new T.CanvasTexture(c);clothGrain.colorSpace=T.SRGBColorSpace;clothGrain.wrapS=clothGrain.wrapT=T.RepeatWrapping;clothGrain.repeat.set(4,4);
-  clothGrain.magFilter=T.NearestFilter;clothGrain.minFilter=T.NearestFilter;
+  clothGrain.anisotropy=8;
   return clothGrain;
 }
 
@@ -67,16 +67,16 @@ function lockGeometry(points,width,thickness){
   const g=new T.BufferGeometry();g.setAttribute('position',new T.Float32BufferAttribute(positions,3));g.setAttribute('uv',new T.Float32BufferAttribute(uv,2));g.setIndex(indices);g.computeVertexNormals();return g;
 }
 function wornCanvas(){
-  const c=document.createElement('canvas');c.width=c.height=128;const q=c.getContext('2d');q.imageSmoothingEnabled=false;
+  const c=document.createElement('canvas');c.width=c.height=512;const q=c.getContext('2d');
   const fab=miniatureTexture('fabric',1);if(fab?.image)q.drawImage(fab.image,0,0,128,128);else{q.fillStyle='#c4956e';q.fillRect(0,0,128,128)}
   const noise=n=>{const v=Math.sin(n*127.1+48.3)*43758.5453;return v-Math.floor(v)};
   for(let i=0;i<36;i++){const x=noise(i)*128,y=noise(i+200)*128,r=3+noise(i+900)*14,g=q.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,i%3?'#fff1d522':'#79664920');g.addColorStop(1,'#ffffff00');q.fillStyle=g;q.fillRect(x-r,y-r,r*2,r*2)}
-  const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(1.4,1.4);map.magFilter=T.NearestFilter;map.minFilter=T.NearestFilter;return map;
+  const map=new T.CanvasTexture(c);map.colorSpace=T.SRGBColorSpace;map.wrapS=map.wrapT=T.RepeatWrapping;map.repeat.set(1.4,1.4);map.anisotropy=8;return map;
 }
 
 // Hand-painted PS1/JRPG face texture with rosy cheeks & soft nose bridge shading
 function complexion(){
-  const c=document.createElement('canvas');c.width=128;c.height=64;const q=c.getContext('2d');q.imageSmoothingEnabled=false;q.fillStyle='#fff9ee';q.fillRect(0,0,128,64);
+  const c=document.createElement('canvas');c.width=512;c.height=256;const q=c.getContext('2d');q.fillStyle='#fff9ee';q.fillRect(0,0,128,64);
   for(const x of [.145,.355]){
     const y=.62,g=q.createRadialGradient(x*128,y*64,0,x*128,y*64,7);
     g.addColorStop(0,'#d47a6288');g.addColorStop(.55,'#dc8d7455');g.addColorStop(1,'#dfab8a00');
@@ -84,13 +84,13 @@ function complexion(){
     // Cute PS1 pixel blush highlights
     q.fillStyle='#ffe8dc88';q.fillRect(Math.round(x*128)-2,Math.round(y*64)-1,1,1);q.fillRect(Math.round(x*128)+1,Math.round(y*64)-1,1,1);
   }
-  const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;return tex;
+  const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.anisotropy=8;return tex;
 }
 
 function nubuck(){
-  const c=document.createElement('canvas');c.width=c.height=64;const q=c.getContext('2d');q.imageSmoothingEnabled=false;q.fillStyle='#e6decd';q.fillRect(0,0,64,64);
+  const c=document.createElement('canvas');c.width=c.height=256;const q=c.getContext('2d');q.fillStyle='#e6decd';q.fillRect(0,0,64,64);
   for(let i=0;i<700;i++){const n=Math.sin(i*127.1+34.2)*43758.5453,x=Math.floor((n-Math.floor(n))*64),m=Math.sin(i*83.3+91)*17822.11,y=Math.floor((m-Math.floor(m))*64);q.fillStyle=i%3?'#ffffff22':'#68533f1c';q.fillRect(x,y,1,1)}
-  const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.magFilter=T.NearestFilter;tex.minFilter=T.NearestFilter;return tex;
+  const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;tex.wrapS=tex.wrapT=T.RepeatWrapping;tex.repeat.set(2,2);tex.anisotropy=8;return tex;
 }
 
 function bakePart(root){
@@ -104,15 +104,15 @@ export function createFarmer(scene,profile={}){
   const M={
     skin:material('#f3cca4','skin'),ear:material('#dca686','skin'),nose:material('#e8b890','skin'),blush:material('#dc997d','skin'),
     hair:material('#4a301f'),hairLight:material('#6f492b'),hairFine:material('#966b42'),
-    cap:material('#728a6b','fabric'),capShade:material('#556d52','fabric'),capSeam:material('#8ea383','fabric'),
+    cap:material('#6f965c','fabric'),capShade:material('#556d52','fabric'),capSeam:material('#8ea383','fabric'),
     shirt:material('#f2ebd6','fabric'),shirtShade:material('#d6cbb0','fabric'),shirtLight:material('#faf4e3','fabric'),
     glove:material('#f5efe0','fabric'),gloveShade:material('#d4ccb8','fabric'),
-    overall:material('#736c82','fabric'),overallDark:material('#595269','fabric'),overallLight:material('#958da3','fabric'),
+    overall:material('#73638c','fabric'),overallDark:material('#595269','fabric'),overallLight:material('#958da3','fabric'),
     thread:material('#b8b38c','fabric'),clothThread:material('#e6d1ae','fabric'),
     scarf:material('#8e6b9c','fabric'),scarfShade:material('#6e4e7d','fabric'),scarfLight:material('#b38ec0','fabric'),
     boot:material('#69462f'),bootDark:material('#4f3626'),bootLight:material('#8a6546'),sole:material('#423b30'),lace:material('#cbb689','fabric'),
     brass:material('#cca95e','metal'),metalDark:material('#877a5c','metal'),
-    pack:material('#b57f5b','fabric'),packFade:material('#c79873','fabric'),packShade:material('#8f694e','fabric'),packEdge:material('#ba9e7b','fabric'),patch:material('#cbb68c','fabric'),
+    pack:material('#cc7c49','fabric'),packFade:material('#c79873','fabric'),packShade:material('#8f694e','fabric'),packEdge:material('#ba9e7b','fabric'),patch:material('#cbb68c','fabric'),
     eye:material('#221d19'),iris:material('#5e4632'),eyeWhite:material('#fffaf0'),glint:material('#ffffff'),mouth:material('#a36652','skin')
   };
   for(const key of ['thread','clothThread','brass','metalDark','packEdge','capSeam','lace','eyeWhite','eye','iris','glint','mouth','hairFine','blush','scarfLight','overallLight'])M[key].userData.castShadow=false;
