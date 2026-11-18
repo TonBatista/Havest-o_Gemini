@@ -24,7 +24,7 @@ function fineCloth(){
 function material(color,kind='plain'){
   const m=new T.MeshStandardMaterial({
     color,
-    roughness:kind==='metal'?.45:kind==='skin'?.58:.82,
+    roughness:kind==='metal'?.35:kind==='skin'?.36:.44,
     metalness:kind==='metal'?.55:0
   });
   if(kind==='fabric'){m.map=fineCloth();m.bumpMap=m.map;m.bumpScale=.0012}
@@ -104,10 +104,10 @@ export function createFarmer(scene,profile={}){
   const M={
     skin:material('#f3cca4','skin'),ear:material('#dca686','skin'),nose:material('#e8b890','skin'),blush:material('#dc997d','skin'),
     hair:material('#4a301f'),hairLight:material('#6f492b'),hairFine:material('#966b42'),
-    cap:material('#6f965c','fabric'),capShade:material('#556d52','fabric'),capSeam:material('#8ea383','fabric'),
+    cap:material('#3d9be8','fabric'),capShade:material('#556d52','fabric'),capSeam:material('#8ea383','fabric'),
     shirt:material('#f2ebd6','fabric'),shirtShade:material('#d6cbb0','fabric'),shirtLight:material('#faf4e3','fabric'),
     glove:material('#f5efe0','fabric'),gloveShade:material('#d4ccb8','fabric'),
-    overall:material('#73638c','fabric'),overallDark:material('#595269','fabric'),overallLight:material('#958da3','fabric'),
+    overall:material('#426aa8','fabric'),overallDark:material('#595269','fabric'),overallLight:material('#958da3','fabric'),
     thread:material('#b8b38c','fabric'),clothThread:material('#e6d1ae','fabric'),
     scarf:material('#8e6b9c','fabric'),scarfShade:material('#6e4e7d','fabric'),scarfLight:material('#b38ec0','fabric'),
     boot:material('#69462f'),bootDark:material('#4f3626'),bootLight:material('#8a6546'),sole:material('#423b30'),lace:material('#cbb689','fabric'),
@@ -119,7 +119,7 @@ export function createFarmer(scene,profile={}){
   const packMap=wornCanvas();for(const key of ['pack','packFade','packShade']){M[key].map=M[key].bumpMap=packMap;M[key].bumpScale=.002}
   const leatherMap=nubuck();for(const key of ['boot','bootDark','bootLight']){M[key].map=M[key].bumpMap=leatherMap;M[key].bumpScale=.002}
   M.bib=M.overall.clone();M.bib.name='avatar-bib';
-  M.glint.roughness=.12;M.eye.roughness=.16;M.iris.roughness=.22;M.hair.roughness=M.hairLight.roughness=.45;M.skin.roughness=.62;
+  M.glint.roughness=.12;M.eye.roughness=.16;M.iris.roughness=.22;M.hair.roughness=M.hairLight.roughness=.45;M.skin.roughness=.35;M.cap.roughness=.34;M.overall.roughness=.42;M.boot.roughness=.38;
 
   const farmer=new T.Group(),body=new T.Group(),torso=new T.Group();farmer.name='farmer';farmer.scale.setScalar(.84);farmer.add(body);body.add(torso);torso.scale.set(.96,.92,.95);torso.position.y=.015;scene.add(farmer);
 
@@ -196,7 +196,7 @@ export function createFarmer(scene,profile={}){
   seam(tail,M.scarfLight,[[-.021,-.025,.017],[-.033,-.095,.04],[-.060,-.157,.032]],.0024);
 
   // Expressive PS1-JRPG Sculpted Head (Softer chin taper, fuller cheeks, larger expressive eyes)
-  const head=new T.Group();head.position.y=1.30;head.scale.setScalar(1.13);body.add(head);const headArt=new T.Group();head.add(headArt);
+  const head=new T.Group();head.position.y=1.33;head.scale.setScalar(1.24);body.add(head);const headArt=new T.Group();head.add(headArt);
   const faceGeo=new T.SphereGeometry(1,22,16),fp=faceGeo.attributes.position;
   for(let i=0;i<fp.count;i++){
     const x=fp.getX(i),y=fp.getY(i),z=fp.getZ(i);
@@ -342,7 +342,7 @@ export function createFarmer(scene,profile={}){
   const winterSleeves=arms.map(arm=>{const g=new T.Group();arm.add(g);ellipsoid(g,M.overall,0,-.135,.005,.097,.175,.094);ellipsoid(g,M.overallDark,0,-.266,.014,.09,.028,.09);bakePart(g);return g});
   const winterCoat=new T.Group();body.add(winterCoat);ellipsoid(winterCoat,M.overall,0,.83,.015,.285,.35,.205);for(const x of[-.09,.09])seam(winterCoat,M.overallLight,[[x,.56,.19],[x,.88,.22],[x,1.1,.17]],.009,10);for(const y of[.68,.81,.94])ellipsoid(winterCoat,M.overallLight,0,y,.225,.025,.025,.015);bakePart(winterCoat);
 
-  function setAppearance(value={}){const valid=c=>/^#[0-9a-f]{6}$/i.test(c||''),sex=value.sex==='female'?'female':'male',color=valid(value.hairColor)?value.hairColor:'#6c492d',hat=['cap','straw','beanie','none'].includes(value.hat)?value.hat:'cap',outfit=['overalls','workshirt','winter'].includes(value.outfit)||sex==='female'&&value.outfit==='dress'?value.outfit:'overalls',shirtColor=valid(value.shirtColor)?value.shirtColor:'#f2ebd6',clothesColor=valid(value.clothesColor)?value.clothesColor:'#736c82';const base=new T.Color(color),shirtBase=new T.Color(shirtColor),clothBase=new T.Color(clothesColor);M.hair.color.copy(base).multiplyScalar(.70);M.hairLight.color.copy(base);M.hairFine.color.copy(base).lerp(new T.Color('#ead7b1'),.25);M.cap.color.set(hat==='beanie'?shirtColor:'#728a6b');M.capShade.color.copy(M.cap.color).multiplyScalar(.83);M.capSeam.color.copy(M.cap.color).lerp(new T.Color('#eee2cf'),.25);M.shirt.color.copy(shirtBase);M.shirtShade.color.copy(shirtBase).multiplyScalar(.86);M.shirtLight.color.copy(shirtBase).lerp(new T.Color('#fff9e8'),.2);M.overall.color.copy(clothBase);M.bib.color.copy(outfit==='workshirt'?shirtBase:clothBase);M.overallDark.color.copy(outfit==='workshirt'?shirtBase:clothBase).multiplyScalar(.82);M.overallLight.color.copy(outfit==='workshirt'?shirtBase:clothBase).lerp(new T.Color('#eee2cf'),.21);longHair.visible=sex==='female';headArt.scale.x=sex==='female'?.98:1;capArt.visible=hat==='cap';strawHat.visible=hat==='straw';beanie.visible=hat==='beanie';uncoveredHair.visible=hat==='none';skirt.visible=outfit==='dress';winterCoat.visible=outfit==='winter';winterSleeves.forEach(g=>g.visible=outfit==='winter');farmer.userData.avatar={sex,hairColor:color,hat,outfit,shirtColor,clothesColor};return farmer.userData.avatar}
+  function setAppearance(value={}){const valid=c=>/^#[0-9a-f]{6}$/i.test(c||''),sex=value.sex==='female'?'female':'male',color=valid(value.hairColor)?value.hairColor:'#6c492d',hat=['cap','straw','beanie','none'].includes(value.hat)?value.hat:'cap',outfit=['overalls','workshirt','winter'].includes(value.outfit)||sex==='female'&&value.outfit==='dress'?value.outfit:'overalls',shirtColor=valid(value.shirtColor)?value.shirtColor:'#f2ebd6',clothesColor=valid(value.clothesColor)?value.clothesColor:'#736c82';const base=new T.Color(color),shirtBase=new T.Color(shirtColor),clothBase=new T.Color(clothesColor);M.hair.color.copy(base).multiplyScalar(.70);M.hairLight.color.copy(base);M.hairFine.color.copy(base).lerp(new T.Color('#ead7b1'),.25);M.cap.color.set(hat==='beanie'?shirtColor:'#3d9be8');M.capShade.color.copy(M.cap.color).multiplyScalar(.83);M.capSeam.color.copy(M.cap.color).lerp(new T.Color('#eee2cf'),.25);M.shirt.color.copy(shirtBase);M.shirtShade.color.copy(shirtBase).multiplyScalar(.86);M.shirtLight.color.copy(shirtBase).lerp(new T.Color('#fff9e8'),.2);M.overall.color.copy(clothBase);M.bib.color.copy(outfit==='workshirt'?shirtBase:clothBase);M.overallDark.color.copy(outfit==='workshirt'?shirtBase:clothBase).multiplyScalar(.82);M.overallLight.color.copy(outfit==='workshirt'?shirtBase:clothBase).lerp(new T.Color('#eee2cf'),.21);longHair.visible=sex==='female';headArt.scale.x=sex==='female'?.98:1;capArt.visible=hat==='cap';strawHat.visible=hat==='straw';beanie.visible=hat==='beanie';uncoveredHair.visible=hat==='none';skirt.visible=outfit==='dress';winterCoat.visible=outfit==='winter';winterSleeves.forEach(g=>g.visible=outfit==='winter');farmer.userData.avatar={sex,hairColor:color,hat,outfit,shirtColor,clothesColor};return farmer.userData.avatar}
   setAppearance(profile);
   return {farmer,body,head,eyes,scarf,tail,arms,legs,knees,feet,setAppearance,get appearance(){return {...farmer.userData.avatar}}};
 }
